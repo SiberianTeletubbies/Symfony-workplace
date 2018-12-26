@@ -1,0 +1,6 @@
+services:
+    acme_user.password_resetting:
+        class: App\Acme\UserBundle\EventListener\FOSUserBundleListener
+        arguments: ['@router']
+        tags:
+            - { name: kernel.event_subscriber }

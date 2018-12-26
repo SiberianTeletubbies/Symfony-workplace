@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Список задач{% endblock %}
+
+{% block body %}
+    <h1>Список задач</h1>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Описание задачи</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Пользователь</th>
+                {% endif %}
+                <th width="15%">Длительность</th>
+                <th width="15%">Файл</th>
+                <th width="30%"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>
+                    {% set temp = task.description[:150]|trim('.') %}
+                    {% if task.description|length > temp|length %}
+                        {{ temp }}...
+                    {% else %}
+                        {{ task.description }}
+                    {% endif %}
+                    <br /><a class="font-italic" href="{{ path('task.show', {'id': task.id}) }}">Подробнее...</a>
+                </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                        {% if task.user %}
+                            {{ task.user.username }}
+                        {% else %}
+                            -
+                        {% endif %}
+                        </td>
+                    {% endif %}
+                <td>{{ task.duration|duration }}</td>
+                <td>
+                    {% if task.attachment %}
+                        <a href="{{ path('task.download', {'id': task.id}) }}">
+                            <span class="glyphicon glyphicon-file mr-1"></span>скачать
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="btn btn-warning float-left mr-2" href="{{ path('task.edit', {'id': task.id}) }}">
+                        Изменить задачу
+                    </a>
+                    <div class="float-left">{% include 'task/_delete_form.html.twig' with {'task': task} %}</div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Задачи не найдены</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('task.new') }}">Создать задачу</a>
+
+    <div class="float-right">
+        {% if pager.getnbpages > 1 %}
+            {{ pagerfanta(pager, { 'omitFirstPage': true }) }}
+        {% endif %}
+    </div>
+{% endblock %}

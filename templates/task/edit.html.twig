@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменить задачу{% endblock %}
+
+{% block body %}
+    <h1>Изменить задачу</h1>
+    {{ include('task/_form.html.twig', {'button_label': 'Изменить'}) }}
+{% endblock %}

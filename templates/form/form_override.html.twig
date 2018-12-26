@@ -1,0 +1,56 @@
+{% block dateinterval_widget -%}
+    {%- if widget != 'single_text' and not valid -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-control is-invalid')|trim}) -%}
+        {% set valid = true %}
+    {%- endif -%}
+    {%- if widget == 'single_text' -%}
+        {{- block('form_widget_simple') -}}
+    {%- else -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-inline')|trim}) -%}
+        <div {{ block('widget_container_attributes') }}>
+            {%- if with_years -%}
+                <div class="col-auto">
+                    Годы
+                    {{ form_widget(form.years) }}
+                </div>
+            {%- endif -%}
+            {%- if with_months -%}
+                <div class="col-auto">
+                    Месяцы
+                    {{ form_widget(form.months) }}
+                </div>
+            {%- endif -%}
+            {%- if with_weeks -%}
+                <div class="col-auto">
+                    Недели
+                    {{ form_widget(form.weeks) }}
+                </div>
+            {%- endif -%}
+            {%- if with_days -%}
+                <div class="col-auto">
+                    Дни
+                    {{ form_widget(form.days) }}
+                </div>
+            {%- endif -%}
+            {%- if with_hours -%}
+                <div class="col-auto">
+                    Часы
+                    {{ form_widget(form.hours) }}
+                </div>
+            {%- endif -%}
+            {%- if with_minutes -%}
+                <div class="col-auto">
+                    Минуты
+                    {{ form_widget(form.minutes) }}
+                </div>
+            {%- endif -%}
+            {%- if with_seconds -%}
+                <div class="col-auto">
+                    Секунды
+                    {{ form_widget(form.seconds) }}
+                </div>
+            {%- endif -%}
+            {%- if with_invert %}{{ form_widget(form.invert) }}{% endif -%}
+        </div>
+    {%- endif -%}
+{%- endblock dateinterval_widget %}

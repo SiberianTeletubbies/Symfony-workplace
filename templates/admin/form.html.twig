@@ -1,0 +1,44 @@
+{% block vich_file_widget %}
+    <div class="easyadmin-vich-file">
+        {% if download_uri|default('') is not empty %}
+            {% set download_title = download_uri|split('/')|last ?: 'download'|trans({}, 'VichUploaderBundle') %}
+            {% set file_extension = download_uri|split('.')|last %}
+            {% set extension_icons = {
+                'gif': 'fa-file-image-o',
+                'jpg': 'fa-file-image-o',
+                'pdf': 'fa-file-pdf-o',
+                'png': 'fa-file-image-o',
+                'zip': 'fa-file-archive-o'
+            } %}
+            {% set route_name = (easyadmin.entity.name ~ '.download')|lower %}
+            {% set url = route_exists(route_name, {'id': easyadmin.item.id}) %}
+            {% if not url %}
+                {% set url = asset(download_uri) %}
+            {% endif %}
+            <a class="easyadmin-vich-file-name" href="{{ url }}">
+                <i class="fa {{ extension_icons[file_extension] ?? 'fa-file-o' }}"></i>
+                {{ download_title }}
+            </a>
+        {% endif %}
+
+        {% set file_upload_js %}
+            var newFile = document.getElementById('{{ form.file.vars.id }}').files[0];
+            var fileSizeInMegabytes = newFile.size > 1024 * 1024;
+            var fileSize = fileSizeInMegabytes ? newFile.size / (1024 * 1024) : newFile.size / 1024;
+            document.getElementById('{{ form.file.vars.id }}_new_file_name').innerText = newFile.name + ' (' + fileSize.toFixed(2) + ' ' + (fileSizeInMegabytes ? 'MB' : 'KB') + ')';
+        {% endset %}
+
+        <div class="easyadmin-vich-file-actions">
+            {# the container element is needed to allow customizing the <input type="file" /> #}
+            <div class="btn input-file-container">
+                <i class="fa fa-upload"></i> {{ 'action.choose_file'|trans({}, 'EasyAdminBundle') }}
+                {{ form_widget(form.file, { 'attr': { 'onchange': file_upload_js }}) }}
+            </div>
+
+            {% if form.delete is defined %}
+                {{ form_row(form.delete, { label: 'form.label.delete'|trans({}, 'VichUploaderBundle') }) }}
+            {% endif %}
+        </div>
+        <div class="small" id="{{ form.file.vars.id }}_new_file_name"></div>
+    </div>
+{% endblock %}

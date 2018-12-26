@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Задача{% endblock %}
+
+{% block body %}
+    <h1>Задача</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Описание задачи</th>
+                <td>{{ task.description }}</td>
+            </tr>
+            <tr>
+                <th>Длительность задачи</th>
+                <td>{{ task.duration|duration }}</td>
+            </tr>
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>Пользователь</th>
+                    <td>
+                        {% if task.user %}
+                            {{ task.user.username }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        <tr>
+            <th>Файл задачи</th>
+            <td>
+                {% if task.attachment %}
+                    <a href="{{ path('task.download', {'id': task.id}) }}">
+                        {{ task.attachmentfilename }}
+                    </a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary" href="{{ return_url }}">К списку задач</a>
+{% endblock %}

@@ -1,0 +1,5 @@
+white_october_pagerfanta:
+    default_view: my_view
+    exceptions_strategy:
+        out_of_range_page:        ~
+        not_valid_current_page:   ~
