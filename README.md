@@ -40,3 +40,9 @@ yarn encore dev
 ```
 php bin/console server:run
 ```
+
+## Дополнительно
+Можно назначить пользователя администратором командой
+```
+php bin/console app:set-admin {username}
+```
