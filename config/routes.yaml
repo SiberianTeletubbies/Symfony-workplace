@@ -4,3 +4,6 @@
 fos_user_security_login:
     path: /login
     controller: App\Controller\Security\SecurityController::loginAction
+
+api_login_check:
+    path: /api/login_check
