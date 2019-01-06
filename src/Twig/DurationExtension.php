@@ -2,11 +2,19 @@
 
 namespace App\Twig;
 
+use App\Services\StringFormatterService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class DurationExtension extends AbstractExtension
 {
+    private $formatter;
+
+    public function __construct(StringFormatterService $formatter)
+    {
+        $this->formatter = $formatter;
+    }
+
     public function getFilters()
     {
         return array(
@@ -16,7 +24,6 @@ class DurationExtension extends AbstractExtension
 
     public function formatDuration($iso8601, $format = '%d д., %h ч.')
     {
-        $interval = new \DateInterval($iso8601);
-        return $interval->format($format);
+        return $this->formatter->formatDuration($iso8601, $format);
     }
 }

@@ -10,7 +10,7 @@ class SecurityController extends \FOS\UserBundle\Controller\SecurityController
     {
         $authChecker = $this->container->get('security.authorization_checker');
         if ($authChecker->isGranted('ROLE_USER')) {
-            return $this->redirectToRoute('home.index');
+            return $this->redirectToRoute('task.index');
         }
 
         return parent::loginAction($request);

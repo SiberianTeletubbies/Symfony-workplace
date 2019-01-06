@@ -6,3 +6,9 @@ fos_user_security_login:
     controller: App\Controller\Security\SecurityController::loginAction
 api_login_check:
     path: /api/login_check
+start_page:
+    path: /
+    controller: App\Controller\TaskController::index
+start_spa_page:
+    path: /spa
+    controller: App\Controller\Api\TaskApiController::start

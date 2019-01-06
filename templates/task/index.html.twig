@@ -57,7 +57,8 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">Задачи не найдены</td>
+                {% set colspan = is_granted('ROLE_ADMIN') ? 5 : 4 %}
+                <td colspan="{{ colspan }}">Задачи не найдены</td>
             </tr>
         {% endfor %}
         </tbody>
