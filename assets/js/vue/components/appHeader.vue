@@ -1,35 +1,24 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="javascript:void(0);">Symfony-workplace</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
-                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <router-link class="nav-link" :to="{name: 'tasks'}">Список задач</router-link>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Symfony</a>
-                    </li>
-                </ul>
-                <ul v-if="username" class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ username }}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" @click="logout" href="#">Выйти</a>
-                        </div>
-                    </li>
-                </ul>
+    <div>
+        <b-navbar type="dark" toggleable="lg" variant="dark">
+            <div class="container">
+                <b-navbar-brand href="javascript:void(0);">Symfony-workplace</b-navbar-brand>
+                <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+                <b-collapse is-nav id="nav_collapse">
+                    <b-navbar-nav>
+                        <b-nav-item :to="{name: 'tasks'}">Список задач</b-nav-item>
+                        <b-nav-item href="/">Symfony</b-nav-item>
+                    </b-navbar-nav>
+                    <b-navbar-nav v-if="username" class="ml-auto">
+                        <b-nav-item-dropdown right>
+                            <template slot="button-content">{{ username }}</template>
+                            <b-dropdown-item @click="logout" href="#">Выйти</b-dropdown-item>
+                        </b-nav-item-dropdown>
+                    </b-navbar-nav>
+                </b-collapse>
             </div>
-        </div>
-    </nav>
+        </b-navbar>
+    </div>
 </template>
 
 <script>

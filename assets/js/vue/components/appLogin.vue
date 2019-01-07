@@ -1,21 +1,31 @@
 <template>
-    <form v-on:submit.prevent="login">
-        <h1 class="h3 mb-3 font-weight-normal">Авторизация пользователя</h1>
-        <div v-show="error" class="alert alert-danger">Недействительные аутентификационные данные.</div>
-        <div class="form-group">
-            <label for="inputUsername">Имя пользователя</label>
-            <input v-model="username" type="text" value="" name="username" id="inputUsername" class="form-control"
-                   placeholder="Введите своё имя пользователя" required="required" autofocus="">
-        </div>
-        <div class="form-group">
-            <label for="inputPassword">Пароль</label>
-            <input v-model="password" type="password" name="password" id="inputPassword" class="form-control"
-                  placeholder="Введите свой пароль" required="required">
-        </div>
-        <button class="btn btn-primary" type="submit" name="submit">
-            Войти в систему
-        </button>
-    </form>
+    <div>
+        <b-form @submit.prevent="login">
+            <h1 class="h3 mb-3 font-weight-normal">Авторизация пользователя</h1>
+            <b-alert variant="danger" dismissible :show="error">
+                Недействительные аутентификационные данные.
+            </b-alert>
+            <b-form-group label="Имя пользователя"
+                          label-for="inputUsername">
+                <b-form-input id="inputUsername"
+                              type="text"
+                              v-model="username"
+                              required
+                              placeholder="Введите своё имя пользователя">
+                </b-form-input>
+            </b-form-group>
+            <b-form-group label="Пароль"
+                          label-for="inputPassword">
+                <b-form-input id="inputPassword"
+                              type="password"
+                              v-model="password"
+                              required
+                              placeholder="Введите свой пароль">
+                </b-form-input>
+            </b-form-group>
+            <b-button type="submit" variant="primary">Войти в систему</b-button>
+        </b-form>
+    </div>
 </template>
 
 <script>
@@ -27,7 +37,7 @@
             return {
                 username: '',
                 password: '',
-                error: '',
+                error: false,
             }
         },
         methods: {

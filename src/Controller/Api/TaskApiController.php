@@ -35,11 +35,10 @@ class TaskApiController extends AbstractController
     }
 
     /**
-     * @Route("/list", name="api.task.tasks", methods={"GET"})
+     * @Route("/list/{page<\d+>?1}", name="api.task.tasks", methods={"GET"})
      */
-    public function tasks(Request $request, TaskRepository $taskRepository): Response
+    public function tasks($page, TaskRepository $taskRepository): Response
     {
-        $page = $request->get('page', 1);
         $admin = $this->isGranted('ROLE_ADMIN');
 
         $queryBuilder = $taskRepository->createQueryBuilder('t');
@@ -53,6 +52,8 @@ class TaskApiController extends AbstractController
         $page = $page > $pager->getNbPages() ? $pager->getNbPages() : $page;
 
         $result = array();
+        $result['nbpages'] = $pager->getNbPages();
+        $result['tasks'] = array();
         $tasks = $query->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
             ->setMaxResults(self::TASKS_PER_PAGE)->getResult();
         /* @var Task $task */
@@ -74,7 +75,7 @@ class TaskApiController extends AbstractController
                     $item->userid = $item->username = null;
                 }
             }
-            $result[] = $item;
+            $result['tasks'][] = $item;
         }
 
         return $this->jsonObjectResponse($result);

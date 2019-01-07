@@ -11,7 +11,7 @@ let router = new VueRouter({
     routes: [
         { path: '/login', name: 'login', component: login },
         { path: '/spa', name: 'spa', component: tasks, meta: {requiresLogin: true} },
-        { path: '/tasks', name: 'tasks', component: tasks, meta: {requiresLogin: true} },
+        { path: '/tasks/:page?', name: 'tasks', component: tasks, meta: {requiresLogin: true} },
     ],
 });
 

@@ -4,52 +4,49 @@
 
         <table class="table table-hover">
             <thead>
-            <tr>
-                <th>Описание задачи</th>
-                <th v-if="admin">Пользователь</th>
-                <th width="15%">Длительность</th>
-                <th width="15%">Файл</th>
-                <th width="30%"></th>
-            </tr>
+                <tr>
+                    <th>Описание задачи</th>
+                    <th v-if="admin">Пользователь</th>
+                    <th width="15%">Длительность</th>
+                    <th width="15%">Файл</th>
+                    <th width="30%"></th>
+                </tr>
             </thead>
             <tbody>
-            <tr v-if="tasks.length > 0" v-for="task in tasks" :key="task.id">
-                <td>
-                    {{ task.description }}
-                    <br /><a class="font-italic" href="#">Подробнее...</a>
-                </td>
-                <td v-if="admin">
-                    <template v-if="task.username">{{ task.username }}</template>
-                    <template v-else>-</template>
-                </td>
-                <td>{{ task.duration }}</td>
-                <td>
-                    <template v-if="task.attachment">
-                        <a :href="task.attachment">
-                            <span class="glyphicon glyphicon-file mr-1"></span>скачать
-                        </a>
-                    </template>
-                    <template v-else>-</template>
-                </td>
-                <td>
-                    <a class="btn btn-warning float-left mr-2" href="#">
-                        Изменить задачу
-                    </a>
-                    <a class="btn btn-danger float-left" href="#">
-                        Удалить задачу
-                    </a>
-                </td>
-            </tr>
-            <tr v-else>
-                <td colspan="4">Задачи не найдены</td>
-            </tr>
+                <tr v-if="tasks.length > 0" v-for="task in tasks" :key="task.id">
+                    <td>
+                        {{ task.description }}
+                        <br /><a class="font-italic" href="#">Подробнее...</a>
+                    </td>
+                    <td v-if="admin">
+                        <template v-if="task.username">{{ task.username }}</template>
+                        <template v-else>-</template>
+                    </td>
+                    <td>{{ task.duration }}</td>
+                    <td>
+                        <template v-if="task.attachment">
+                            <a :href="task.attachment">
+                                <span class="glyphicon glyphicon-file mr-1"></span>скачать
+                            </a>
+                        </template>
+                        <template v-else>-</template>
+                    </td>
+                    <td>
+                        <b-button type="submit" class="float-left mr-2" variant="warning">Изменить задачу</b-button>
+                        <b-button type="submit" class="float-left" variant="danger">Удалить задачу</b-button>
+                    </td>
+                </tr>
+                <tr v-else>
+                    <td :colspan="admin ? 5 : 4">Задачи не найдены</td>
+                </tr>
             </tbody>
         </table>
 
-        <a class="btn btn-primary" href="#">Создать задачу</a>
+        <b-button type="submit" variant="primary">Создать задачу</b-button>
 
-        <div class="float-right">
-            paginator
+        <div v-if="totalPages > 1" class="float-right">
+            <b-pagination-nav @input="getTasks" use-router="true" base-url="/tasks/"
+                :number-of-pages="totalPages" v-model="page" hide-goto-end-buttons />
         </div>
     </div>
 </template>
@@ -63,6 +60,7 @@
             return {
                 tasks: [],
                 page: 1,
+                totalPages: 0,
             }
         },
         computed: {
@@ -76,9 +74,10 @@
         methods: {
             getTasks: function() {
                 taskApi.list(this.page, response => {
-                    this.tasks = response.data;
+                    this.totalPages = response.data.nbpages;
+                    this.tasks = response.data.tasks;
                 });
-            }
+            },
         }
     }
 </script>
