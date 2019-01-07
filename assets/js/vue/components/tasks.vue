@@ -16,7 +16,7 @@
                 <tr v-if="tasks.length > 0" v-for="task in tasks" :key="task.id">
                     <td>
                         {{ task.description }}
-                        <br /><a class="font-italic" href="#">Подробнее...</a>
+                        <br /><b-link class="font-italic" :to="{name: 'task', params: {id: task.id}}">Подробнее...</b-link>
                     </td>
                     <td v-if="admin">
                         <template v-if="task.username">{{ task.username }}</template>
@@ -45,7 +45,7 @@
         <b-button type="submit" variant="primary">Создать задачу</b-button>
 
         <div v-if="totalPages > 1" class="float-right">
-            <b-pagination-nav @input="getTasks" use-router="true" base-url="/tasks/"
+            <b-pagination-nav @input="getTasks" use-router base-url="/tasks/"
                 :number-of-pages="totalPages" v-model="page" hide-goto-end-buttons />
         </div>
     </div>
@@ -69,10 +69,13 @@
             },
         },
         created: function() {
+            const page = this.$router.history.current.params.page;
+            this.page = page ? Number(page) : 1;
             this.getTasks();
         },
         methods: {
             getTasks: function() {
+                this.tasks = [];
                 taskApi.list(this.page, response => {
                     this.totalPages = response.data.nbpages;
                     this.tasks = response.data.tasks;

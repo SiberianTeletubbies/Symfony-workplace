@@ -5,12 +5,13 @@ namespace App\Controller\Api;
 use App\Entity\Task;
 use App\Repository\TaskRepository;
 use App\Services\StringFormatterService;
+use App\Services\UserService;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -22,11 +23,18 @@ class TaskApiController extends AbstractController
     const TASKS_PER_PAGE = 8;
     private $router;
     private $formatter;
+    /** @var UserService */
+    private $userService;
 
-    public function __construct(UrlGeneratorInterface $router, StringFormatterService $formatter)
+    public function __construct(
+        UrlGeneratorInterface $router,
+        StringFormatterService $formatter,
+        UserService $userService
+    )
     {
         $this->router = $router;
         $this->formatter = $formatter;
+        $this->userService = $userService;
     }
 
     public function start()
@@ -53,37 +61,74 @@ class TaskApiController extends AbstractController
 
         $result = array();
         $result['nbpages'] = $pager->getNbPages();
+
         $result['tasks'] = array();
         $tasks = $query->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
             ->setMaxResults(self::TASKS_PER_PAGE)->getResult();
         /* @var Task $task */
         foreach ($tasks as $task) {
-            $item = new \stdClass();
-            $item->id = $task->getId();
-            $item->description = $task->getDescription();
-            $item->duration = $this->formatter->formatDuration($task->getDuration());
-            $item->attachment = $task->getAttachment() != null ?
-                $this->router->generate(
-                    'task.download', ['id' => $task->getId()]
-                ) : null;
-            if ($admin) {
-                $user = $task->getUser();
-                if ($user != null) {
-                    $item->userid = $user->getId();
-                    $item->username = $user->getUsername();
-                } else {
-                    $item->userid = $item->username = null;
-                }
-            }
-            $result['tasks'][] = $item;
+            $result['tasks'][] = $this->generateTaskObject($task);
         }
 
         return $this->jsonObjectResponse($result);
+    }
+
+    /**
+     * @Route("/{id<\d+>}", name="api.task", methods={"GET"})
+     */
+    public function task(Task $task): Response
+    {
+        if ($response = $this->accessControl($task)) {
+            return $response;
+        }
+
+        $result = $this->generateTaskObject($task);
+
+        return $this->jsonObjectResponse($result);
+    }
+
+    private function generateTaskObject(Task $task)
+    {
+        $result = array();
+        $result['id'] = $task->getId();
+        $result['description'] = $task->getDescription();
+        $result['duration'] = $this->formatter->formatDuration($task->getDuration());
+        if ($task->getAttachment() != null) {
+            $result['attachment'] = $this->router->generate(
+                'task.download', ['id' => $task->getId()]
+            );
+            $result['attachment_filename'] = $task->getAttachmentFileName();
+        } else {
+            $result['attachment'] = $result['attachment_filename'] = null;
+        }
+        $user = $task->getUser();
+        if ($user != null) {
+            $result['userid'] = $user->getId();
+            $result['username'] = $user->getUsername();
+        } else {
+            $result['userid'] = $result['username'] = null;
+        }
+        return $result;
     }
 
     private function jsonObjectResponse($object) : JsonResponse
     {
         $jsonContent = json_encode($object);
         return new JsonResponse($jsonContent, 200, array(), true);
+    }
+
+    private function accessControl(Task $task)
+    {
+        if (!$this->userService->accessControlToTask($task)) {
+            return $this->createEmptyResponse(401);
+        }
+        return null;
+    }
+
+    private function createEmptyResponse($code = 200)
+    {
+        $response = new Response(null, $code);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Services\UserService;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,10 +24,12 @@ class TaskController extends AbstractController
 {
     const TASKS_PER_PAGE = 8;
     private $redis;
+    private $userService;
 
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         $this->redis = RedisAdapter::createConnection('redis://localhost:6379');
+        $this->userService = $userService;
     }
 
     /**
@@ -163,7 +166,7 @@ class TaskController extends AbstractController
 
     private function accessControl(Task $task)
     {
-        if (!$this->isGranted('ROLE_ADMIN') && $task->getUser() != $this->getUser()) {
+        if (!$this->userService->accessControlToTask($task)) {
             throw $this->createAccessDeniedException('У Вас недостаточно прав');
         }
     }

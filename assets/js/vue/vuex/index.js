@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        globalError: '',
+        returnUrl: '',
         user: {
             token: null,
             username: null,
@@ -13,9 +13,6 @@ export default new Vuex.Store({
         },
     },
     mutations: {
-        setGlobalError (state, error) {
-            state.globalError = error
-        },
         logout (state) {
             state.user.token = null;
             state.user.username = null;

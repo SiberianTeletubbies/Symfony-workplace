@@ -13,4 +13,14 @@ export default class Task {
                 console.log(error);
             });
     }
+
+    static get(id = 1, successCallback) {
+        axios
+            .get(`/api/task/${id}`, {headers: {"Authorization": `Bearer ${store.state.user.token}`}})
+            .then(response => successCallback(response))
+            .catch(error => {
+                userApi.logout();
+                console.log(error);
+            });
+    }
 }

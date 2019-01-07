@@ -8,8 +8,8 @@ Vue.use(BootstrapVue);
 
 new Vue({
     el: '#vueApp',
+    router,
     store,
     template: '<app />',
     components: { app },
-    router: router
 });

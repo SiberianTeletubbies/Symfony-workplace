@@ -21,7 +21,7 @@ class SetAdminCommand extends Command
 
     protected function configure() {
         $this->setName('app:set-admin')
-            ->addArgument('username', InputArgument::REQUIRED, 'Имя пользователя');;
+            ->addArgument('username', InputArgument::REQUIRED, 'Имя пользователя');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
