@@ -13,32 +13,46 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-if="tasks.length > 0" v-for="task in tasks" :key="task.id">
-                    <td>
-                        {{ task.description }}
-                        <br /><b-link class="font-italic" :to="{name: 'task', params: {id: task.id}}">Подробнее...</b-link>
-                    </td>
-                    <td v-if="admin">
-                        <template v-if="task.username">{{ task.username }}</template>
-                        <template v-else>-</template>
-                    </td>
-                    <td>{{ task.duration }}</td>
-                    <td>
-                        <template v-if="task.attachment">
-                            <a :href="task.attachment">
-                                <span class="glyphicon glyphicon-file mr-1"></span>скачать
-                            </a>
-                        </template>
-                        <template v-else>-</template>
-                    </td>
-                    <td>
-                        <b-button type="submit" class="float-left mr-2" variant="warning">Изменить задачу</b-button>
-                        <b-button type="submit" class="float-left" variant="danger">Удалить задачу</b-button>
-                    </td>
-                </tr>
-                <tr v-else>
-                    <td :colspan="admin ? 5 : 4">Задачи не найдены</td>
-                </tr>
+                <template v-if="tasks.length > 0" >
+                    <tr v-for="task in tasks" :key="task.id">
+                        <td>
+                            <template v-if="task.description.length > 150">
+                                {{ task.description.substring(0, 150).trim() }}...
+                            </template>
+                            <template v-else>{{ task.description }}</template><br />
+                            <b-link class="font-italic" :to="{name: 'task', params: {id: task.id}}">
+                                Подробнее...
+                            </b-link>
+                        </td>
+                        <td v-if="admin">
+                            <template v-if="task.username">{{ task.username }}</template>
+                            <template v-else>-</template>
+                        </td>
+                        <td>{{ task.duration }}</td>
+                        <td>
+                            <template v-if="task.attachment">
+                                <a :href="task.attachment">
+                                    <span class="glyphicon glyphicon-file mr-1"></span>скачать
+                                </a>
+                            </template>
+                            <template v-else>-</template>
+                        </td>
+                        <td>
+                            <b-button type="submit" class="float-left mr-2" variant="warning">Изменить задачу</b-button>
+                            <b-button type="submit" class="float-left" variant="danger">Удалить задачу</b-button>
+                        </td>
+                    </tr>
+                </template>
+                <template v-else-if="tasks.length === 0 && loaded">
+                    <tr>
+                        <td :colspan="admin ? 5 : 4">Задачи не найдены</td>
+                    </tr>
+                </template>
+                <template v-else>
+                    <tr>
+                        <td :colspan="admin ? 5 : 4">Пожалуйста, подождите...</td>
+                    </tr>
+                </template>
             </tbody>
         </table>
 
@@ -53,6 +67,7 @@
 
 <script>
     import taskApi from '../../api/task.js';
+    import userApi from '../../api/user.js';
 
     export default {
         name: "tasks",
@@ -61,6 +76,7 @@
                 tasks: [],
                 page: 1,
                 totalPages: 0,
+                loaded: false,
             }
         },
         computed: {
@@ -69,17 +85,25 @@
             },
         },
         created: function() {
-            const page = this.$router.history.current.params.page;
+            const page = this.$router.currentRoute.params.page;
             this.page = page ? Number(page) : 1;
             this.getTasks();
         },
         methods: {
             getTasks: function() {
                 this.tasks = [];
-                taskApi.list(this.page, response => {
-                    this.totalPages = response.data.nbpages;
-                    this.tasks = response.data.tasks;
-                });
+                this.loaded = false;
+                taskApi.list(this.page,
+                    response => {
+                        this.loaded = true;
+                        this.totalPages = response.data.nbpages;
+                        this.tasks = response.data.tasks;
+                    },
+                    error => {
+                        console.log(error);
+                        userApi.logout();
+                    },
+                );
             },
         }
     }

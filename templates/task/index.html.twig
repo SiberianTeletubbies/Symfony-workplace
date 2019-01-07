@@ -21,7 +21,7 @@
         {% for task in tasks %}
             <tr>
                 <td>
-                    {% set temp = task.description[:150]|trim('.') %}
+                    {% set temp = task.description[:150]|trim('.')|trim %}
                     {% if task.description|length > temp|length %}
                         {{ temp }}...
                     {% else %}
