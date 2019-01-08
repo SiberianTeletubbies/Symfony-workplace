@@ -9,7 +9,7 @@
                 </tr>
                 <tr>
                     <th>Длительность задачи</th>
-                    <td>{{ task.duration }}</td>
+                    <td>{{ `${task.duration_days} д., ${task.duration_hours} ч.` }}</td>
                 </tr>
                 <tr v-if="admin">
                     <th>Пользователь</th>

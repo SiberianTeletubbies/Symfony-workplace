@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use App\Entity\Task;
 use App\Repository\TaskRepository;
-use App\Services\StringFormatterService;
 use App\Services\UserService;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -21,18 +20,15 @@ class TaskApiController extends AbstractController
 {
     const TASKS_PER_PAGE = 8;
     private $router;
-    private $formatter;
     /** @var UserService */
     private $userService;
 
     public function __construct(
         UrlGeneratorInterface $router,
-        StringFormatterService $formatter,
         UserService $userService
     )
     {
         $this->router = $router;
-        $this->formatter = $formatter;
         $this->userService = $userService;
     }
 
@@ -91,7 +87,9 @@ class TaskApiController extends AbstractController
         $result = array();
         $result['id'] = $task->getId();
         $result['description'] = $task->getDescription();
-        $result['duration'] = $this->formatter->formatDuration($task->getDuration());
+        $interval = new \DateInterval($task->getDuration());
+        $result['duration_days'] = $interval->d;
+        $result['duration_hours'] = $interval->h;
         if ($task->getAttachment() != null) {
             $result['attachment'] = $this->router->generate(
                 'task.download', ['id' => $task->getId()]

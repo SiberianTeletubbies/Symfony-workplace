@@ -28,7 +28,7 @@
                             <template v-if="task.username">{{ task.username }}</template>
                             <template v-else>-</template>
                         </td>
-                        <td>{{ task.duration }}</td>
+                        <td>{{ `${task.duration_days} д., ${task.duration_hours} ч.` }}</td>
                         <td>
                             <template v-if="task.attachment">
                                 <a :href="task.attachment">
@@ -38,8 +38,13 @@
                             <template v-else>-</template>
                         </td>
                         <td>
-                            <b-button type="submit" class="float-left mr-2" variant="warning">Изменить задачу</b-button>
-                            <b-button type="submit" class="float-left" variant="danger">Удалить задачу</b-button>
+                            <b-button type="submit" :to="{name: 'task_edit', params: {id: task.id}}"
+                                class="float-left mr-2" variant="warning">
+                                Изменить задачу
+                            </b-button>
+                            <b-button type="submit" class="float-left" variant="danger">
+                                Удалить задачу
+                            </b-button>
                         </td>
                     </tr>
                 </template>
@@ -56,7 +61,9 @@
             </tbody>
         </table>
 
-        <b-button type="submit" variant="primary">Создать задачу</b-button>
+        <b-button type="submit" variant="primary" :to="{name: 'task_edit'}">
+            Создать задачу
+        </b-button>
 
         <div v-if="totalPages > 1" class="float-right">
             <b-pagination-nav @input="getTasks" use-router base-url="/tasks/"

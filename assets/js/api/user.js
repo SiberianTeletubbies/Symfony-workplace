@@ -25,6 +25,12 @@ export default class User {
             .catch(error => errorCallback(error));
     }
 
+    static list(successCallback) {
+        axios
+            .get('/api/user/list', {headers: {"Authorization": `Bearer ${store.state.user.token}`}})
+            .then(response => successCallback(response));
+    }
+
     static logout() {
         store.commit('logout');
         router.push('/login');
