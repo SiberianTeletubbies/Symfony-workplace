@@ -37,6 +37,6 @@ services:
         class: Pagerfanta\View\OptionableView
         arguments:
             - '@pagerfanta.view.twitter_bootstrap4'
-            - { proximity: 1, prev_message: &laquo;, next_message: &raquo; }
+            - { proximity: 1, prev_message: ‹, next_message: › }
         public: false
         tags: [{ name: pagerfanta.view, alias: my_view }]

@@ -16,4 +16,24 @@ export default class Task {
             .then(response => successCallback(response))
             .catch(error => errorCallback(error));
     }
+
+    static save(id, formData, successCallback, errorCallback) {
+        let url = '/api/task/save';
+        if (id) {
+            url += `/${id}`;
+        }
+        axios
+            .post(
+                url,
+                formData,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${store.state.user.token}`,
+                        "Content-Type": 'multipart/form-data'
+                    }
+                }
+            )
+            .then(response => successCallback(response))
+            .catch(error => errorCallback(error));
+    }
 }

@@ -2,7 +2,7 @@
     <div>
         <h1>{{ action }} задачу</h1>
 
-        <b-form v-if="loaded" @submit.prevent="send" enctype="multipart/form-data">
+        <b-form v-if="loaded" enctype="multipart/form-data">
 
             <div class="form-group">
                 <label class="required">Описание</label>
@@ -29,9 +29,9 @@
 
             <div v-if="admin" class="form-group">
                 <label>Пользователь задачи</label>
-                <b-form-select v-model="user.userid">
+                <b-form-select v-model="user.userid" :disabled="user.users.length === 0">
                     <template slot="first">
-                        <option :value="null" disabled>Не выбран</option>
+                        <option :value="null">Не выбран</option>
                     </template>
                     <option v-for="u in user.users" :key="u.id" :value="u.id">
                         {{ u.username }}
@@ -50,7 +50,7 @@
                 </template>
             </fieldset>
 
-            <b-button variant="primary">{{ action }} задачу</b-button>
+            <b-button variant="primary" @click.prevent="send">{{ action }} задачу</b-button>
             <b-button variant="secondary" @click="$router.go(-1)">Отмена</b-button>
 
         </b-form>
@@ -91,15 +91,18 @@
             admin() {
                 return this.$store.state.user.admin;
             },
+            id() {
+                return this.$router.currentRoute.params.id;
+            }
         },
         created: function() {
-            this.action = this.$router.currentRoute.params.id ? 'Изменить' : 'Создать';
+            this.action = this.id ? 'Изменить' : 'Создать';
             this.getTask();
             this.getUsers();
         },
         methods: {
             getTask: function() {
-                const id = this.$router.currentRoute.params.id ? this.$router.currentRoute.params.id : null;
+                const id = this.id ? this.id : null;
                 if (id !== null) {
                     taskApi.get(
                         id,
@@ -130,7 +133,28 @@
                 }
             },
             send: function () {
-                console.log('send');
+                let user = '';
+                if (this.admin) {
+                    if (this.user.userid != null) {
+                        user = this.user.userid;
+                    }
+                } else {
+                    user = this.$store.state.user.id;
+                }
+
+                const formData = new FormData();
+                formData.append('id', this.id ? this.id : '');
+                formData.append('description', this.description);
+                formData.append('duration_days', this.duration.days);
+                formData.append('duration_hours', this.duration.hours);
+                formData.append('userid', user);
+                formData.append('attachmentFile', this.file.attachment ? this.file.attachment : '');
+
+                taskApi.save(this.id, formData, response => this.$router.go(-1),
+                    error => {
+                        console.log(error);
+                    }
+                );
             }
         }
     }

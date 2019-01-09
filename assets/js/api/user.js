@@ -15,6 +15,7 @@ export default class User {
                 axios
                     .get('/api/user', { headers: {"Authorization": `Bearer ${this.token}`} })
                     .then(response => {
+                        store.state.user.id = response.data.id;
                         store.state.user.username = response.data.username;
                         store.state.user.admin = response.data.admin;
                         store.state.user.token = this.token;

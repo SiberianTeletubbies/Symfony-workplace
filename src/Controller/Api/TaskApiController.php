@@ -3,12 +3,17 @@
 namespace App\Controller\Api;
 
 use App\Entity\Task;
+use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use App\Services\UserService;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -82,6 +87,56 @@ class TaskApiController extends AbstractController
         return $this->jsonObjectResponse($result);
     }
 
+    /**
+     * @Route("/save/{id<\d+>?}", name="api.task.save", methods={"POST"})
+     */
+    public function save(Request $request, Task $task = null): Response
+    {
+        if ($task == null) {
+            $task = new Task();
+        } else if ($response = $this->accessControl($task)) {
+            return $response;
+        }
+
+        $formData = array(
+            'description' => $request->request->get('description'),
+            'duration' => array(
+                'days' => $request->request->get('duration_days'),
+                'hours' => $request->request->get('duration_hours'),
+            ),
+        );
+
+        $user = $request->request->get('userid');
+        if ($this->isGranted('ROLE_ADMIN') && $user) {
+            $formData['user'] = $user;
+        }
+
+        /** @var UploadedFile $file */
+        $file = $request->files->get('attachmentFile');
+        if ($file) {
+            $formData['attachmentFile'] = array('file' => $file);
+        }
+
+        $form = $this->createForm(TaskType::class, $task, array('csrf_protection' => false));
+        $form->submit($formData);
+
+        if ($form->isValid()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $task->setUser($this->getUser());
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($task);
+            $entityManager->flush();
+        }
+
+        $errors = $this->getFormErrors($form);
+        if (count($errors) > 0) {
+            return $this->createResponse(400, $errors);
+        }
+
+        return $this->createResponse();
+    }
+
     private function generateTaskObject(Task $task)
     {
         $result = array();
@@ -117,15 +172,36 @@ class TaskApiController extends AbstractController
     private function accessControl(Task $task)
     {
         if (!$this->userService->accessControlToTask($task)) {
-            return $this->createEmptyResponse(401);
+            return $this->createResponse(401);
         }
         return null;
     }
 
-    private function createEmptyResponse($code = 200)
+    private function createResponse($code = 200, $content = null)
     {
-        $response = new Response(null, $code);
+        $response = new Response($content ? json_encode($content) : null, $code);
         $response->headers->set('Content-Type', 'application/json');
         return $response;
+    }
+
+    private function getFormErrors(FormInterface $form): array
+    {
+        $errors = array();
+
+        // Global
+        foreach ($form->getErrors() as $error) {
+            $errors[$form->getName()][] = $error->getMessage();
+        }
+
+        // Fields
+        foreach ($form as $child /** @var Form $child */) {
+            if (!$child->isValid()) {
+                foreach ($child->getErrors() as $error) {
+                    $errors[$child->getName()][] = $error->getMessage();
+                }
+            }
+        }
+
+        return $errors;
     }
 }

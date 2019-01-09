@@ -75,7 +75,9 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $task->setUser($this->getUser());
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $task->setUser($this->getUser());
+            }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($task);
             $entityManager->flush();

@@ -6,6 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         user: {
+            id: null,
             token: null,
             username: null,
             admin: false,
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     },
     mutations: {
         logout (state) {
+            state.user.id = null;
             state.user.token = null;
             state.user.username = null;
             state.user.admin = false;
