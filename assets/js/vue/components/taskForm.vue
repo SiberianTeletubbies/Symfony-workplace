@@ -184,7 +184,6 @@
                         const data = error.response.data;
                         const keys = Object.keys(data);
                         for (let key of keys) {
-                            console.log(key);
                             switch(key)
                             {
                                 case 'task':
