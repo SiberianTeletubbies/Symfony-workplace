@@ -141,9 +141,6 @@
                             this.file.url = response.data.attachment;
                             this.file.attachment_filename = response.data.attachment_filename;
                             this.loaded = true;
-                        },
-                        error => {
-                            console.log(error);
                         }
                     );
                 } else {

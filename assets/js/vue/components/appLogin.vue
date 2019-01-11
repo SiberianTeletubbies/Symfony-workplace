@@ -42,10 +42,7 @@
         },
         methods: {
             login: function() {
-                userApi.auth(this.username, this.password, error => {
-                    this.error = true;
-                    console.log(error);
-                });
+                userApi.auth(this.username, this.password, error => this.error = true);
             },
         }
     }

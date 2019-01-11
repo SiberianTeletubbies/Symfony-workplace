@@ -1,46 +1,56 @@
 import axios from 'axios';
 import store from "../vue/vuex";
+import ajaxManager from "./ajaxManager.js";
 
 export default class Task {
 
-    static list(page = 1, successCallback, errorCallback) {
-        axios
-            .get(`/api/task/list/${page}`, {headers: {"Authorization": `Bearer ${store.state.user.token}`}})
-            .then(response => successCallback(response))
-            .catch(error => errorCallback(error));
+    static list(page = 1, successCallback = null, errorCallback = null) {
+        const options = {
+            method: 'get',
+            url: `/api/task/list/${page}`,
+            headers: {
+                "Authorization": `Bearer ${store.state.user.token}`
+            }
+        };
+        ajaxManager.request(options, successCallback, errorCallback);
     }
 
-    static get(id = 1, successCallback, errorCallback) {
-        axios
-            .get(`/api/task/${id}`, {headers: {"Authorization": `Bearer ${store.state.user.token}`}})
-            .then(response => successCallback(response))
-            .catch(error => errorCallback(error));
+    static get(id = 1, successCallback = null, errorCallback = null) {
+        const options = {
+            method: 'get',
+            url: `/api/task/${id}`,
+            headers: {
+                "Authorization": `Bearer ${store.state.user.token}`
+            }
+        };
+        ajaxManager.request(options, successCallback, errorCallback);
     }
 
-    static save(id, formData, successCallback, errorCallback) {
+    static save(id, formData, successCallback = null, errorCallback = null) {
         let url = '/api/task/save';
         if (id) {
             url += `/${id}`;
         }
-        axios
-            .post(
-                url,
-                formData,
-                {
-                    headers: {
-                        "Authorization": `Bearer ${store.state.user.token}`,
-                        "Content-Type": 'multipart/form-data'
-                    }
-                }
-            )
-            .then(response => successCallback(response))
-            .catch(error => errorCallback(error));
+        const options = {
+            method: 'post',
+            url: url,
+            data: formData,
+            headers: {
+                "Authorization": `Bearer ${store.state.user.token}`,
+                "Content-Type": 'multipart/form-data'
+            }
+        };
+        ajaxManager.request(options, successCallback, errorCallback);
     }
 
-    static delete(id, successCallback, errorCallback) {
-        axios
-            .delete(`/api/task/${id}`, {headers: {"Authorization": `Bearer ${store.state.user.token}`}})
-            .then(response => successCallback(response))
-            .catch(error => errorCallback(error));
+    static delete(id, successCallback = null, errorCallback = null) {
+        const options = {
+            method: 'delete',
+            url: `/api/task/${id}`,
+            headers: {
+                "Authorization": `Bearer ${store.state.user.token}`
+            }
+        };
+        ajaxManager.request(options, successCallback, errorCallback);
     }
 }

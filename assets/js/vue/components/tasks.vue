@@ -107,9 +107,6 @@
                         this.totalPages = response.data.nbpages;
                         this.tasks = response.data.tasks;
                     },
-                    error => {
-                        console.log(error);
-                    },
                 );
             },
             deleteTask: function (id) {
@@ -117,9 +114,6 @@
                     taskApi.delete(id,
                         response => {
                             this.getTasks();
-                        },
-                        error => {
-                            console.log(error);
                         },
                     );
                 }

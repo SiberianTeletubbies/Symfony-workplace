@@ -74,7 +74,6 @@
                     },
                     error => {
                         this.loaded = true;
-                        console.log(error);
                     }
                 );
             },
