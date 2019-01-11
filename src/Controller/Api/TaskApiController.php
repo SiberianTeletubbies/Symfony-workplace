@@ -111,6 +111,11 @@ class TaskApiController extends AbstractController
             $formData['user'] = $user;
         }
 
+        $deleteFile = $request->request->get('deleteFile');
+        if ($deleteFile) {
+            $formData['attachmentFile'] = array('delete' => 1);
+        }
+
         /** @var UploadedFile $file */
         $file = $request->files->get('attachmentFile');
         if ($file) {
@@ -172,7 +177,7 @@ class TaskApiController extends AbstractController
     private function accessControl(Task $task)
     {
         if (!$this->userService->accessControlToTask($task)) {
-            return $this->createResponse(401);
+            return $this->createResponse(404);
         }
         return null;
     }

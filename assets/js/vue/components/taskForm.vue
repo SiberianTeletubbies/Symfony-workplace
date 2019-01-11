@@ -64,7 +64,7 @@
                     :placeholder="file.url ? file.attachment_filename : 'Выберите файл'">
                 </b-form-file>
                 <template v-if="file.url">
-                    <b-form-checkbox v-model="file.file_delete">Удалить?</b-form-checkbox><br />
+                    <b-form-checkbox v-model="file.delete">Удалить?</b-form-checkbox><br />
                     <a :href="file.url">Скачать</a>
                 </template>
             </fieldset>
@@ -172,12 +172,19 @@
                 }
 
                 const formData = new FormData();
-                formData.append('id', this.id ? this.id : '');
+                if (this.id) {
+                    formData.append('id', this.id);
+                }
                 formData.append('description', this.description);
                 formData.append('duration_days', this.duration.days);
                 formData.append('duration_hours', this.duration.hours);
                 formData.append('userid', user);
-                formData.append('attachmentFile', this.file.attachment ? this.file.attachment : '');
+                if (this.file.attachment) {
+                    formData.append('attachmentFile', this.file.attachment);
+                }
+                if (this.file.delete) {
+                    formData.append('deleteFile', this.file.delete);
+                }
 
                 taskApi.save(this.id, formData, response => this.$router.go(-1),
                     error => {
