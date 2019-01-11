@@ -36,4 +36,11 @@ export default class Task {
             .then(response => successCallback(response))
             .catch(error => errorCallback(error));
     }
+
+    static delete(id, successCallback, errorCallback) {
+        axios
+            .delete(`/api/task/${id}`, {headers: {"Authorization": `Bearer ${store.state.user.token}`}})
+            .then(response => successCallback(response))
+            .catch(error => errorCallback(error));
+    }
 }

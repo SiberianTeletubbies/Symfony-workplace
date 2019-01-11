@@ -139,7 +139,26 @@ class TaskApiController extends AbstractController
             return $this->createResponse(400, $errors);
         }
 
-        return $this->createResponse();
+        $result = $this->generateTaskObject($task);
+        return $this->jsonObjectResponse($result);
+    }
+
+    /**
+     * @Route("/{id<\d+>}", name="api.task.delete", methods={"DELETE"})
+     */
+    public function delete(Task $task): Response
+    {
+        if ($response = $this->accessControl($task)) {
+            return $response;
+        }
+
+        $result = $this->generateTaskObject($task);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($task);
+        $entityManager->flush();
+
+        return $this->jsonObjectResponse($result);
     }
 
     private function generateTaskObject(Task $task)

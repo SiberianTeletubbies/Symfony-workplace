@@ -69,7 +69,7 @@
                 </template>
             </fieldset>
 
-            <b-button variant="primary" @click.prevent="send">{{ action }} задачу</b-button>
+            <b-button variant="primary" @click.prevent="save">{{ action }} задачу</b-button>
             <b-button variant="secondary" @click="$router.go(-1)">Отмена</b-button>
 
         </b-form>
@@ -159,7 +159,7 @@
                     );
                 }
             },
-            send: function () {
+            save: function () {
                 this.clearErrors();
 
                 let user = '';

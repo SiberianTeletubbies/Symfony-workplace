@@ -42,7 +42,8 @@
                                 class="float-left mr-2" variant="warning">
                                 Изменить задачу
                             </b-button>
-                            <b-button type="submit" class="float-left" variant="danger">
+                            <b-button type="submit" @click.prevent="deleteTask(task.id)"
+                                class="float-left" variant="danger">
                                 Удалить задачу
                             </b-button>
                         </td>
@@ -108,10 +109,21 @@
                     },
                     error => {
                         console.log(error);
-                        userApi.logout();
                     },
                 );
             },
+            deleteTask: function (id) {
+                if (confirm('Вы хотите удалить данную задачу?')) {
+                    taskApi.delete(id,
+                        response => {
+                            this.getTasks();
+                        },
+                        error => {
+                            console.log(error);
+                        },
+                    );
+                }
+            }
         }
     }
 </script>
