@@ -1,5 +1,6 @@
 <template>
     <div>
+        <vue-headful title="Авторизация"/>
         <b-form @submit.prevent="login">
             <h1 class="h3 mb-3 font-weight-normal">Авторизация пользователя</h1>
             <b-alert variant="danger" dismissible :show="error">

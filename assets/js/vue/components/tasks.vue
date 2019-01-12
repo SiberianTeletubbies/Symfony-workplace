@@ -1,5 +1,7 @@
 <template>
     <div>
+        <vue-headful title="Список задач"/>
+
         <h1>Список задач</h1>
 
         <table class="table table-hover">

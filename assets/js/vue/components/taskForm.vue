@@ -1,5 +1,7 @@
 <template>
     <div>
+        <vue-headful :title="this.action + ' задачу'"/>
+
         <h1>{{ action }} задачу</h1>
 
         <b-form v-if="loaded" enctype="multipart/form-data">

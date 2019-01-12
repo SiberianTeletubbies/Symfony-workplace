@@ -1,5 +1,6 @@
 <template>
     <div>
+        <vue-headful title="Задача"/>
         <h1>Задача</h1>
         <table class="table">
             <tbody v-if="task != null">
