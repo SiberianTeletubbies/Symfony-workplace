@@ -8,6 +8,7 @@
 * PHP7
 * Composer
 * Redis (для Windows взять [отсюда](https://github.com/MicrosoftArchive/redis/releases) и добавить [расширение](https://pecl.php.net/package/redis/3.1.4/windows) в PHP)
+* OpenSSL (для Windows взять [отсюда](https://slproweb.com/products/Win32OpenSSL.html))
 * Node.js
 * Yarn
 
@@ -19,24 +20,30 @@
 composer install
 ```
 4. создать файл **.env.local**, скопировав в него содержимое **.env**
-5. настроить подключение к базе данных в файле **.env.local**
-6. создать базу данных
+5. получить SSH-ключи для генерации JWT-токена
+```
+openssl genrsa -out config/jwt/private.pem -aes256 4096
+openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+```
+6. указать секретную фразу, использованную при генерации SSH, в файле **.env.local**
+7. настроить подключение к базе данных в файле **.env.local**
+8. создать базу данных
 ```
 php bin/console doctrine:database:create
 ```
-7. выполнить миграции
+9. выполнить миграции
 ```
 php bin/console doctrine:migrations:migrate
 ```
-8. установить все зависимости frontend
+10. установить все зависимости frontend
 ```
 yarn install
 ```
-9. скомпоновать файлы frontend
+11. скомпоновать файлы frontend
 ```
 yarn encore dev
 ```
-10. запустить сервер разработки
+12. запустить сервер разработки
 ```
 php bin/console server:run
 ```
