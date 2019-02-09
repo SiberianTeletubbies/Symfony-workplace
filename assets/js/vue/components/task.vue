@@ -12,6 +12,20 @@
                     <th>Длительность задачи</th>
                     <td>{{ `${task.duration_days} д., ${task.duration_hours} ч.` }}</td>
                 </tr>
+                <tr>
+                    <th>Дополнительная информация</th>
+                    <td>
+                        <template v-if="task.additional_data.info">{{ task.additional_data.info }}</template>
+                        <template v-else>-</template>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Приоритет задачи</th>
+                    <td>
+                        <template v-if="task.additional_data.priority">{{ task.additional_data.priority|taskPriority }}</template>
+                        <template v-else>-</template>
+                    </td>
+                </tr>
                 <tr v-if="admin">
                     <th>Пользователь</th>
                     <td>

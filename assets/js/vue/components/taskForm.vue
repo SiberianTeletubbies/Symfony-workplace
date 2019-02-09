@@ -42,6 +42,30 @@
                 </div>
             </fieldset>
 
+            <div class="form-group">
+                <label class="required">
+                    Дополнительная информация
+                    <error-message ref="e_info" v-show="error.info === false"/>
+                </label>
+                <b-form-textarea :state="error.info" v-model="info" :rows="3" :max-rows="3">
+                    {{ info }}
+                </b-form-textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="required">
+                    Приоритет задачи
+                    <error-message ref="e_priority" v-show="error.priority === false"/>
+                </label>
+                <b-form-select v-model="priority" :state="error.priority">
+                    <template>
+                        <option :value="0">Низкий</option>
+                        <option :value="1">Средний</option>
+                        <option :value="2">Высокий</option>
+                    </template>
+                </b-form-select>
+            </div>
+
             <div v-if="admin" class="form-group">
                 <label>
                     Пользователь задачи
@@ -97,6 +121,8 @@
                     days: 0,
                     hours: 0,
                 },
+                info: '',
+                priority: 0,
                 user: {
                     userid: null,
                     users: [],
@@ -111,6 +137,8 @@
                     taskForm: [],
                     description: null,
                     duration: null,
+                    info: null,
+                    priority: null,
                     user: null,
                     attachment: null,
                 }
@@ -139,6 +167,10 @@
                             this.description = response.data.description;
                             this.duration.days = response.data.duration_days;
                             this.duration.hours = response.data.duration_hours;
+                            this.info = 'info' in response.data.additional_data ?
+                                response.data.additional_data.info : '';
+                            this.priority = 'priority' in response.data.additional_data ?
+                                response.data.additional_data.priority : 0;
                             this.user.userid = response.data.userid;
                             this.file.url = response.data.attachment;
                             this.file.attachment_filename = response.data.attachment_filename;
@@ -177,6 +209,8 @@
                 formData.append('description', this.description);
                 formData.append('duration_days', this.duration.days);
                 formData.append('duration_hours', this.duration.hours);
+                formData.append('info', this.info);
+                formData.append('priority', this.priority);
                 formData.append('userid', user);
                 if (this.file.attachment) {
                     formData.append('attachmentFile', this.file.attachment);
@@ -203,6 +237,14 @@
                                     this.$refs.e_duration.textMessage = data[key].pop();
                                     this.error.duration = false;
                                     break;
+                                case 'info':
+                                    this.$refs.e_info.textMessage = data[key].pop();
+                                    this.error.info = false;
+                                    break;
+                                case 'priority':
+                                    this.$refs.e_priority.textMessage = data[key].pop();
+                                    this.error.priority = false;
+                                    break;
                                 case 'user':
                                     this.$refs.e_user.textMessage = data[key].pop();
                                     this.error.user = false;
@@ -220,6 +262,8 @@
                 this.error.taskForm = [];
                 this.error.description = null;
                 this.error.duration = null;
+                this.error.info = null;
+                this.error.priority = null;
                 this.error.user = null;
                 this.error.attachment = null;
             },

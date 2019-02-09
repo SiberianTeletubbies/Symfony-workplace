@@ -49,6 +49,11 @@ class TaskType extends AbstractType
                     'with_months' => false,
                     'with_days'   => true,
                     'with_hours'  => true,
+                ])
+            ->add('additionalData',
+                TaskAdditionalDataType::class,
+                [
+                    'label' => false,
                 ]);
 
         if ($this->security->isGranted('ROLE_ADMIN')) {

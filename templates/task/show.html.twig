@@ -15,6 +15,26 @@
                 <th>Длительность задачи</th>
                 <td>{{ task.duration|duration }}</td>
             </tr>
+            <tr>
+                <th>Дополнительная информация</th>
+                <td>
+                    {% if task.additionalData.data.info is defined %}
+                        {{ task.additionalData.data.info }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Приоритет задачи</th>
+                <td>
+                    {% if task.additionalData.data.priority is defined %}
+                        {{ task.additionalData.data.priority|taskPriority }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
             {% if is_granted('ROLE_ADMIN') %}
                 <tr>
                     <th>Пользователь</th>

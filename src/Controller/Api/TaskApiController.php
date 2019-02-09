@@ -104,6 +104,10 @@ class TaskApiController extends AbstractController
                 'days' => $request->request->get('duration_days'),
                 'hours' => $request->request->get('duration_hours'),
             ),
+            'additionalData' => array(
+                'info' => $request->request->get('info'),
+                'priority' => $request->request->get('priority'),
+            ),
         );
 
         $user = $request->request->get('userid');
@@ -169,6 +173,8 @@ class TaskApiController extends AbstractController
         $interval = new \DateInterval($task->getDuration());
         $result['duration_days'] = $interval->d;
         $result['duration_hours'] = $interval->h;
+        $additionalData = $task->getAdditionalData();
+        $result['additional_data'] = $additionalData != null ? $additionalData->getData() : [];
         if ($task->getAttachment() != null) {
             $result['attachment'] = $this->router->generate(
                 'task.download', ['id' => $task->getId()]
@@ -218,14 +224,20 @@ class TaskApiController extends AbstractController
         }
 
         // Fields
+        $this->getFormChildErrors($form, $errors);
+
+        return $errors;
+    }
+
+    private function getFormChildErrors(FormInterface $form, &$errors)
+    {
         foreach ($form as $child /** @var Form $child */) {
+            $this->getFormChildErrors($child, $errors);
             if (!$child->isValid()) {
                 foreach ($child->getErrors() as $error) {
                     $errors[$child->getName()][] = $error->getMessage();
                 }
             }
         }
-
-        return $errors;
     }
 }

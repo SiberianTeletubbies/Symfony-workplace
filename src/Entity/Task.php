@@ -58,6 +58,11 @@ class Task
      */
     private $attachmentFile;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\TaskAdditionalData", mappedBy="task", cascade={"persist", "remove"})
+     */
+    private $additionalData;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -152,5 +157,22 @@ class Task
     public function getAttachmentFile(): ?File
     {
         return $this->attachmentFile;
+    }
+
+    public function getAdditionalData(): ?TaskAdditionalData
+    {
+        return $this->additionalData;
+    }
+
+    public function setAdditionalData(?TaskAdditionalData $additionalData): self
+    {
+        $this->additionalData = $additionalData;
+
+        // set the owning side of the relation if necessary
+        if (null != $additionalData && $this !== $additionalData->getTask()) {
+            $additionalData->setTask($this);
+        }
+
+        return $this;
     }
 }
