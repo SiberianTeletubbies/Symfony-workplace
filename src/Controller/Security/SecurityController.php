@@ -24,7 +24,8 @@ class SecurityController extends \FOS\UserBundle\Controller\SecurityController
     /**
      * @Route(
      *     "/user/register",
-     *     name="user.register", methods={"POST"},
+     *     name="user.register",
+     *     methods={"POST"},
      *     condition="request.headers.get('Content-Type') == 'application/json'"
      * )
      */

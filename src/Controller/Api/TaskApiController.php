@@ -43,9 +43,9 @@ class TaskApiController extends AbstractController
     }
 
     /**
-     * @Route("/list/{page<\d+>?1}", name="api.task.tasks", methods={"GET"})
+     * @Route("/list/{page<\d+>?}", name="api.task.tasks", methods={"GET"})
      */
-    public function tasks($page, TaskRepository $taskRepository): Response
+    public function tasks($page = 0, TaskRepository $taskRepository): Response
     {
         $admin = $this->isGranted('ROLE_ADMIN');
 
@@ -63,8 +63,11 @@ class TaskApiController extends AbstractController
         $result['nbpages'] = $pager->getNbPages();
 
         $result['tasks'] = array();
-        $tasks = $query->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
-            ->setMaxResults(self::TASKS_PER_PAGE)->getResult();
+        $tasks = $page > 0 ?
+            $query
+                ->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
+                ->setMaxResults(self::TASKS_PER_PAGE)->getResult() :
+            $query->getResult();
         /* @var Task $task */
         foreach ($tasks as $task) {
             $result['tasks'][] = $this->generateTaskObject($task);
