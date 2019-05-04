@@ -1,0 +1,11 @@
+{% if username is not empty %}
+    <div class="d-inline">
+        {% if app.user.username != username %}
+            <a href="{{ path('start_page', {'_switch_user': username}) }}"
+               title="войти под именем"
+            >
+                <span class="glyphicon glyphicon-log-in"></span>
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
