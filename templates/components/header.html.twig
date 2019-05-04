@@ -27,11 +27,24 @@
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        >
+                            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                                <span class="glyphicon glyphicon-log-in mr-1"></span>
+                            {% endif %}
                             {{ app.user.username }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ path('fos_user_security_logout') }}">Выйти</a>
+                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                            <a class="dropdown-item" href="{{ path('start_page', {'_switch_user': '_exit'}) }}">
+                                Выйти из под {{ app.user.username }}
+                            </a>
+                        {% else %}
+                            <a class="dropdown-item" href="{{ path('fos_user_security_logout') }}">
+                                Выйти
+                            </a>
+                        {% endif %}
                         </div>
                     </li>
                 </ul>

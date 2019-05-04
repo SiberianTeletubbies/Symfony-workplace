@@ -41,6 +41,7 @@
                     <td>
                         {% if task.user %}
                             {{ task.user.username }}
+                            {{ include('components/switch_user.html.twig', {'username': task.user.username}) }}
                         {% else %}
                             -
                         {% endif %}
