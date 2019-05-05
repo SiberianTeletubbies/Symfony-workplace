@@ -27,7 +27,10 @@
                             </b-link>
                         </td>
                         <td v-if="admin">
-                            <template v-if="task.username">{{ task.username }}</template>
+                            <template v-if="task.username">
+                                {{ task.username }}
+                                <login-as :username="task.username" />
+                            </template>
                             <template v-else>-</template>
                         </td>
                         <td>{{ `${task.duration_days} д., ${task.duration_hours} ч.` }}</td>
@@ -77,10 +80,11 @@
 
 <script>
     import taskApi from '../../api/task.js';
-    import userApi from '../../api/user.js';
+    import loginAs from "./loginAs";
 
     export default {
         name: "tasks",
+        components: {loginAs},
         data() {
             return {
                 tasks: [],
@@ -91,7 +95,15 @@
         },
         computed: {
             admin() {
-                return this.$store.state.user.admin;
+                return this.$store.getters.user.admin;
+            },
+            reload() {
+                return this.$store.state.reloadTasks;
+            },
+        },
+        watch: {
+            reload (newValue, oldValue) {
+                this.getTasks();
             },
         },
         created: function() {

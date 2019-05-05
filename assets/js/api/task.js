@@ -1,4 +1,3 @@
-import axios from 'axios';
 import store from "../vue/vuex";
 import ajaxManager from "./ajaxManager.js";
 
@@ -9,7 +8,7 @@ export default class Task {
             method: 'get',
             url: `/api/task/list/${page}`,
             headers: {
-                "Authorization": `Bearer ${store.state.user.token}`
+                "Authorization": `Bearer ${store.getters.user.token}`
             }
         };
         ajaxManager.request(options, successCallback, errorCallback);
@@ -20,7 +19,7 @@ export default class Task {
             method: 'get',
             url: `/api/task/${id}`,
             headers: {
-                "Authorization": `Bearer ${store.state.user.token}`
+                "Authorization": `Bearer ${store.getters.user.token}`
             }
         };
         ajaxManager.request(options, successCallback, errorCallback);
@@ -36,7 +35,7 @@ export default class Task {
             url: url,
             data: formData,
             headers: {
-                "Authorization": `Bearer ${store.state.user.token}`,
+                "Authorization": `Bearer ${store.getters.user.token}`,
                 "Content-Type": 'multipart/form-data'
             }
         };
@@ -48,7 +47,7 @@ export default class Task {
             method: 'delete',
             url: `/api/task/${id}`,
             headers: {
-                "Authorization": `Bearer ${store.state.user.token}`
+                "Authorization": `Bearer ${store.getters.user.token}`
             }
         };
         ajaxManager.request(options, successCallback, errorCallback);

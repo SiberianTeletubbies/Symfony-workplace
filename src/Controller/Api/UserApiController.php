@@ -3,7 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Services\UserService;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,6 +63,29 @@ class UserApiController extends AbstractController
         }
 
         return $this->jsonObjectResponse($result);
+    }
+
+    /**
+     * @Route("/{username}/token", name="api.user.token", methods={"GET"})
+     */
+    public function getToken(
+        $username,
+        UserRepository $userRepository,
+        JWTTokenManagerInterface $jwtManager
+    ): Response
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->createEmptyResponse(401);
+        }
+
+        $user = $userRepository->findOneBy(['username' => $username]);
+        if (empty($user)) {
+            return $this->createEmptyResponse(404);
+        }
+
+        $token = $jwtManager->create($user);
+
+        return $this->jsonObjectResponse(['token' => $token]);
     }
 
     private function jsonObjectResponse($object) : JsonResponse

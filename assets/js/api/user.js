@@ -40,7 +40,7 @@ export default class User {
             method: 'get',
             url: '/api/user/list',
             headers: {
-                "Authorization": `Bearer ${store.state.user.token}`
+                "Authorization": `Bearer ${store.getters.user.token}`
             }
         };
         ajaxManager.request(options, successCallback, errorCallback);
@@ -49,5 +49,50 @@ export default class User {
     static logout() {
         store.commit('logout');
         router.push('/login');
+    }
+
+    static loginAs(username, successCallback = null, errorCallback = null) {
+        const options = {
+            method: 'get',
+            url: `/api/user/${username}/token`,
+            headers: {
+                "Authorization": `Bearer ${store.getters.user.token}`
+            }
+        };
+        ajaxManager.request(
+            options,
+            response => {
+                this.token = response.data.token;
+                const options = {
+                    method: 'get',
+                    url: '/api/user',
+                    headers: {
+                        "Authorization": `Bearer ${this.token}`
+                    }
+                };
+                ajaxManager.request(
+                    options,
+                    response => {
+                        store.state.switchUser.id = response.data.id;
+                        store.state.switchUser.username = response.data.username;
+                        store.state.switchUser.admin = response.data.admin;
+                        store.state.switchUser.token = this.token;
+                        store.state.loginAs = true;
+
+                        router.push('/tasks');
+                        store.commit('reloadTasks');
+                    },
+                    errorCallback
+                );
+            },
+            errorCallback
+        );
+    }
+
+    static logoutAs() {
+        store.commit('logoutAs');
+
+        router.push('/tasks');
+        store.commit('reloadTasks');
     }
 }

@@ -29,7 +29,10 @@
                 <tr v-if="admin">
                     <th>Пользователь</th>
                     <td>
-                        <template v-if="task.username">{{ task.username }}</template>
+                        <template v-if="task.username">
+                            {{ task.username }}
+                            <login-as :username="task.username" />
+                        </template>
                         <template v-else>-</template>
                     </td>
                 </tr>
@@ -62,9 +65,11 @@
 
 <script>
     import taskApi from '../../api/task.js';
+    import loginAs from "./loginAs";
 
     export default {
         name: "task",
+        components: {loginAs},
         data() {
             return {
                 task: null,
@@ -73,7 +78,7 @@
         },
         computed: {
             admin() {
-                return this.$store.state.user.admin;
+                return this.$store.getters.user.admin;
             },
         },
         created: function() {

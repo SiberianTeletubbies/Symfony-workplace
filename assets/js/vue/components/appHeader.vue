@@ -11,8 +11,16 @@
                     </b-navbar-nav>
                     <b-navbar-nav v-if="username" class="ml-auto">
                         <b-nav-item-dropdown right>
-                            <template slot="button-content">{{ username }}</template>
-                            <b-dropdown-item @click="logout" href="#">Выйти</b-dropdown-item>
+                            <template slot="button-content">
+                                <span v-if="switchUser" class="glyphicon glyphicon-log-in mr-1"></span>
+                                {{ username }}
+                            </template>
+                            <b-dropdown-item v-if="!switchUser" @click="logout" href="#">
+                                Выйти
+                            </b-dropdown-item>
+                            <b-dropdown-item v-if="switchUser" @click="logoutAs" href="#">
+                                Выйти из под {{ username }}
+                            </b-dropdown-item>
                         </b-nav-item-dropdown>
                     </b-navbar-nav>
                 </b-collapse>
@@ -30,10 +38,16 @@
             logout: function() {
                 userApi.logout();
             },
+            logoutAs: function () {
+                userApi.logoutAs();
+            },
         },
         computed: {
             username() {
-                return this.$store.state.user.username;
+                return this.$store.getters.user.username;
+            },
+            switchUser() {
+                return this.$store.state.loginAs;
             },
         }
     }

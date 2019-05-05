@@ -21,7 +21,7 @@ let router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresLogin);
-    if (requiresAuth && !store.state.user.token) {
+    if (requiresAuth && !store.getters.user.token) {
         next('/login');
     } else {
         next();

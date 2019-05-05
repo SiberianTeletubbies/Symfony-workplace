@@ -146,7 +146,7 @@
         },
         computed: {
             admin() {
-                return this.$store.state.user.admin;
+                return this.$store.getters.user.admin;
             },
             id() {
                 return this.$router.currentRoute.params.id;
