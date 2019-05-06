@@ -51,7 +51,7 @@ export default class User {
         router.push('/login');
     }
 
-    static loginAs(username, successCallback = null, errorCallback = null) {
+    static loginAs(username, errorCallback = null) {
         const options = {
             method: 'get',
             url: `/api/user/${username}/token`,
