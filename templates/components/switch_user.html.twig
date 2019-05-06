@@ -1,4 +1,4 @@
-{% if username is not empty and is_granted('ROLE_ALLOWED_TO_SWITCH') %}
+{% if username is not empty and is_granted('ROLE_ALLOWED_TO_SWITCH') and not is_granted('ROLE_PREVIOUS_ADMIN') %}
     <div class="d-inline">
         {% if app.user.username != username %}
             <a href="{{ path('start_page', {'_switch_user': username}) }}"
