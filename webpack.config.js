@@ -20,6 +20,7 @@ Encore
     .addEntry('app', './assets/js/app.js')
     .addEntry('vue', './assets/js/vue.js')
     .addStyleEntry('bootstrap', './assets/css/global.scss')
+    .addEntry('comments', './assets/js/comments.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 

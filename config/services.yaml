@@ -40,3 +40,17 @@ services:
             - { proximity: 1, prev_message: ‹, next_message: › }
         public: false
         tags: [{ name: pagerfanta.view, alias: my_view }]
+
+    foscomment.roles:
+        class: App\Acme\CommentBundle\RoleCommentAcl
+        public: false
+        arguments:
+            - '@security.token_storage'
+            - '@security.authorization_checker'
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+            - ROLE_USER # create role
+            - ROLE_USER # view role
+            - ROLE_ADMIN # edit role
+            - ROLE_ADMIN # delete role
+            - '%fos_comment.model.comment.class%'

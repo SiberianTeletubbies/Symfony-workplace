@@ -63,5 +63,11 @@
         </tbody>
     </table>
 
-    <a class="btn btn-secondary" href="{{ return_url }}">К списку задач</a>
+    <a class="btn btn-secondary mb-2" href="{{ return_url }}">К списку задач</a>
+
+    <hr />
+    {% include '@FOSComment/Thread/async.html.twig' with {'id': 'task_' ~ task.id} %}
+    <hr />
+
+    <a class="btn btn-secondary mt-2" href="{{ return_url }}">К списку задач</a>
 {% endblock %}
