@@ -5,7 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    app.path.task_attachments: /files/tasks
+    app.path.task_attachments: /tasks/attachments
+    app.path.task_images: /tasks/images
 
 services:
     # default configuration for services in *this* file

@@ -60,6 +60,22 @@
                 {% endif %}
             </td>
         </tr>
+            <tr>
+                <th>Изображение задачи</th>
+                <td>
+                    {% if task.image %}
+                        <img
+                            src="{{ vich_uploader_asset(task, 'imageFile') | imagine_filter('task_image_100x100') }}"
+                        />
+                        <br />
+                        <a href="{{ path('task.image', {'id': task.id}) }}">
+                            {{ task.imagefilename }}
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
         </tbody>
     </table>
 

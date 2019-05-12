@@ -63,6 +63,28 @@ class Task
      */
     private $additionalData;
 
+    /**
+     * @ORM\Column(type="string", length=1000, nullable=true)
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="string", length=1000, nullable=true)
+     */
+    private $imageFileName;
+
+    /**
+     * @Assert\File(
+     *     maxSize = "5M",
+     *     mimeTypes = {"image/jpeg", "image/gif", "image/png", "image/tiff"},
+     *     maxSizeMessage = "Максимальный размер изображения составляет 5 мегабайт.",
+     *     mimeTypesMessage = "Необходимо загрузить изображение."
+     * )
+     * @Vich\UploadableField(mapping="image_file", fileNameProperty="image", originalName="imageFileName")
+     * @var File
+     */
+    private $imageFile;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -145,6 +167,11 @@ class Task
         return $this;
     }
 
+    public function getAttachmentFile(): ?File
+    {
+        return $this->attachmentFile;
+    }
+
     public function setAttachmentFile(?File $attachmentFile = null): void
     {
         $this->attachmentFile = $attachmentFile;
@@ -152,11 +179,6 @@ class Task
         if (null !== $attachmentFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
-    }
-
-    public function getAttachmentFile(): ?File
-    {
-        return $this->attachmentFile;
     }
 
     public function getAdditionalData(): ?TaskAdditionalData
@@ -174,5 +196,43 @@ class Task
         }
 
         return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getImageFileName(): ?string
+    {
+        return $this->imageFileName;
+    }
+
+    public function setImageFileName(?string $imageFileName): self
+    {
+        $this->imageFileName = $imageFileName;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 }

@@ -8,6 +8,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <th></th>
                 <th>Описание задачи</th>
                 {% if is_granted('ROLE_ADMIN') %}
                     <th>Пользователь</th>
@@ -20,6 +21,15 @@
         <tbody>
         {% for task in tasks %}
             <tr>
+                <td>
+                    {% if task.image is not empty %}
+                        <img
+                            src="{{ vich_uploader_asset(task, 'imageFile') | imagine_filter('task_image_100x100') }}"
+                        />
+                    {% else %}
+                        <img src="{{ asset('images/no-photo.png') }}">
+                    {% endif %}
+                </td>
                 <td>
                     {% set temp = task.description[:150]|trim('.')|trim %}
                     {% if task.description|length > temp|length %}
@@ -50,7 +60,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a class="btn btn-warning float-left mr-2" href="{{ path('task.edit', {'id': task.id}) }}">
+                    <a class="btn btn-warning float-left mr-2 btn-sm" href="{{ path('task.edit', {'id': task.id}) }}">
                         Изменить задачу
                     </a>
                     <div class="float-left">{% include 'task/_delete_form.html.twig' with {'task': task} %}</div>
@@ -58,7 +68,7 @@
             </tr>
         {% else %}
             <tr>
-                {% set colspan = is_granted('ROLE_ADMIN') ? 5 : 4 %}
+                {% set colspan = is_granted('ROLE_ADMIN') ? 6 : 5 %}
                 <td colspan="{{ colspan }}">Задачи не найдены</td>
             </tr>
         {% endfor %}
