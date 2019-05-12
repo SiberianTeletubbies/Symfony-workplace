@@ -24,7 +24,7 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 /uploads/
-
+/public/web.config
 /.idea
 
 ###> lexik/jwt-authentication-bundle ###

@@ -35,6 +35,7 @@ class SecurityController extends \FOS\UserBundle\Controller\SecurityController
         UserManagerInterface $userManager
     )
     {
+        // TODO: добавить вызов событий до/после регистрации пользователя
         $userData = json_decode($request->getContent(), true);
 
         if (empty($userData['email'])) {
