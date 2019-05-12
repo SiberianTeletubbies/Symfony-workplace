@@ -22,7 +22,9 @@
                 <tr>
                     <th>Приоритет задачи</th>
                     <td>
-                        <template v-if="task.additional_data.priority">{{ task.additional_data.priority|taskPriority }}</template>
+                        <template v-if="Number.isInteger(task.additional_data.priority)">
+                            {{ task.additional_data.priority|taskPriority }}
+                        </template>
                         <template v-else>-</template>
                     </td>
                 </tr>
@@ -42,6 +44,19 @@
                         <template v-if="task.attachment">
                             <a :href="task.attachment">
                                 {{ task.attachment_filename }}
+                            </a>
+                        </template>
+                        <template v-else>-</template>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Изображение задачи</th>
+                    <td>
+                        <template v-if="task.image">
+                            <img :src="task.image_mini">
+                            <br />
+                            <a :href="task.image">
+                                {{ task.image_filename }}
                             </a>
                         </template>
                         <template v-else>-</template>

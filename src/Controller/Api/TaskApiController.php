@@ -6,6 +6,8 @@ use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use App\Services\UserService;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Templating\FilterExtension;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
  * @Route("/api/task")
@@ -27,14 +30,22 @@ class TaskApiController extends AbstractController
     private $router;
     /** @var UserService */
     private $userService;
+    /** @var UploaderHelper */
+    private $uploaderHelper;
+    /** @var FilterExtension */
+    private $imagineFilter;
 
     public function __construct(
         UrlGeneratorInterface $router,
-        UserService $userService
+        UserService $userService,
+        UploaderHelper $uploaderHelper,
+        CacheManager $cache
     )
     {
         $this->router = $router;
         $this->userService = $userService;
+        $this->uploaderHelper = $uploaderHelper;
+        $this->imagineFilter = new FilterExtension($cache);
     }
 
     public function start()
@@ -129,6 +140,17 @@ class TaskApiController extends AbstractController
             $formData['attachmentFile'] = array('file' => $file);
         }
 
+        $deleteImage = $request->request->get('deleteImage');
+        if ($deleteImage) {
+            $formData['imageFile'] = array('delete' => 1);
+        }
+
+        /** @var UploadedFile $file */
+        $image = $request->files->get('imageFile');
+        if ($image) {
+            $formData['imageFile'] = array('file' => $image);
+        }
+
         $form = $this->createForm(TaskType::class, $task, array('csrf_protection' => false));
         $form->submit($formData);
 
@@ -176,9 +198,11 @@ class TaskApiController extends AbstractController
         $interval = new \DateInterval($task->getDuration());
         $result['duration_days'] = $interval->d;
         $result['duration_hours'] = $interval->h;
+
         $additionalData = $task->getAdditionalData();
         $result['additional_data'] = $additionalData != null ? $additionalData->getData() : [];
-        if ($task->getAttachment() != null) {
+
+        if (null != $task->getAttachment()) {
             $result['attachment'] = $this->router->generate(
                 'task.download', ['id' => $task->getId()]
             );
@@ -186,13 +210,27 @@ class TaskApiController extends AbstractController
         } else {
             $result['attachment'] = $result['attachment_filename'] = null;
         }
+
+        if (null != $task->getImage()) {
+            $result['image'] = $this->router->generate(
+                'task.image', ['id' => $task->getId()]
+            );
+            $imageFile = $this->uploaderHelper->asset($task, 'imageFile');
+            $imageMini = $this->imagineFilter->filter($imageFile, 'task_image_100x100');
+            $result['image_mini'] = $imageMini;
+            $result['image_filename'] = $task->getImageFileName();
+        } else {
+            $result['image'] = $result['image_mini'] = $result['image_filename'] = null;
+        }
+
         $user = $task->getUser();
-        if ($user != null) {
+        if (null != $user) {
             $result['userid'] = $user->getId();
             $result['username'] = $user->getUsername();
         } else {
             $result['userid'] = $result['username'] = null;
         }
+
         return $result;
     }
 

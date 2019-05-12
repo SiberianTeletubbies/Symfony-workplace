@@ -86,12 +86,26 @@
                     Файл задачи
                     <error-message ref="e_attachment" v-show="error.attachment === false"/>
                 </label>
-                <b-form-file :state="error.attachment" v-model="file.attachment"
-                    :placeholder="file.url ? file.attachment_filename : 'Выберите файл'">
+                <b-form-file :state="error.attachment" v-model="attachment.file"
+                    :placeholder="attachment.url ? attachment.filename : 'Выберите файл'">
                 </b-form-file>
-                <template v-if="file.url">
-                    <b-form-checkbox v-model="file.delete">Удалить?</b-form-checkbox><br />
-                    <a :href="file.url">Скачать</a>
+                <template v-if="attachment.url">
+                    <b-form-checkbox v-model="attachment.delete">Удалить?</b-form-checkbox><br />
+                    <a :href="attachment.url">Скачать</a>
+                </template>
+            </fieldset>
+
+            <fieldset class="form-group">
+                <label>
+                    Изображение задачи
+                    <error-message ref="e_image" v-show="error.image === false"/>
+                </label>
+                <b-form-file :state="error.image" v-model="image.file"
+                             :placeholder="image.url ? image.filename : 'Выберите изображение'">
+                </b-form-file>
+                <template v-if="image.url">
+                    <b-form-checkbox v-model="image.delete">Удалить?</b-form-checkbox><br />
+                    <img :src="image.mini">
                 </template>
             </fieldset>
 
@@ -127,10 +141,17 @@
                     userid: null,
                     users: [],
                 },
-                file: {
+                attachment: {
                     url: null,
-                    attachment_filename: null,
-                    attachment: null,
+                    filename: null,
+                    file: null,
+                    delete: false,
+                },
+                image: {
+                    url: null,
+                    filename: null,
+                    file: null,
+                    mini: null,
                     delete: false,
                 },
                 error: {
@@ -141,6 +162,7 @@
                     priority: null,
                     user: null,
                     attachment: null,
+                    image: null,
                 }
             }
         },
@@ -172,8 +194,11 @@
                             this.priority = 'priority' in response.data.additional_data ?
                                 response.data.additional_data.priority : 0;
                             this.user.userid = response.data.userid;
-                            this.file.url = response.data.attachment;
-                            this.file.attachment_filename = response.data.attachment_filename;
+                            this.attachment.url = response.data.attachment;
+                            this.attachment.filename = response.data.attachment_filename;
+                            this.image.url = response.data.image;
+                            this.image.filename = response.data.image_filename;
+                            this.image.mini = response.data.image_mini;
                             this.loaded = true;
                         }
                     );
@@ -212,11 +237,17 @@
                 formData.append('info', this.info);
                 formData.append('priority', this.priority);
                 formData.append('userid', user);
-                if (this.file.attachment) {
-                    formData.append('attachmentFile', this.file.attachment);
+                if (this.attachment.file) {
+                    formData.append('attachmentFile', this.attachment.file);
                 }
-                if (this.file.delete) {
-                    formData.append('deleteFile', this.file.delete);
+                if (this.attachment.delete) {
+                    formData.append('deleteFile', this.attachment.delete);
+                }
+                if (this.image.file) {
+                    formData.append('imageFile', this.image.file);
+                }
+                if (this.image.delete) {
+                    formData.append('deleteImage', this.image.delete);
                 }
 
                 taskApi.save(this.id, formData, response => this.$router.go(-1),
@@ -253,6 +284,10 @@
                                     this.$refs.e_attachment.textMessage = data[key].pop();
                                     this.error.attachment = false;
                                     break;
+                                case 'imageFile':
+                                    this.$refs.e_image.textMessage = data[key].pop();
+                                    this.error.image = false;
+                                    break;
                             }
                         }
                     }
@@ -266,6 +301,7 @@
                 this.error.priority = null;
                 this.error.user = null;
                 this.error.attachment = null;
+                this.error.image = null;
             },
         },
         components: {errorMessage}

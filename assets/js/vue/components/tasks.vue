@@ -7,6 +7,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Описание задачи</th>
                     <th v-if="admin">Пользователь</th>
                     <th width="15%">Длительность</th>
@@ -17,6 +18,14 @@
             <tbody>
                 <template v-if="tasks.length > 0" >
                     <tr v-for="task in tasks" :key="task.id">
+                        <td>
+                            <template v-if="task.image">
+                                <img :src="task.image_mini">
+                            </template>
+                            <template v-else>
+                                <img src="images/no-image.png">
+                            </template>
+                        </td>
                         <td>
                             <template v-if="task.description.length > 150">
                                 {{ task.description.substring(0, 150).trim() }}...
@@ -44,11 +53,11 @@
                         </td>
                         <td>
                             <b-button type="submit" :to="{name: 'task_edit', params: {id: task.id}}"
-                                class="float-left mr-2" variant="warning">
+                                class="float-left mr-2 btn-sm" variant="warning">
                                 Изменить задачу
                             </b-button>
                             <b-button type="submit" @click.prevent="deleteTask(task.id)"
-                                class="float-left" variant="danger">
+                                class="float-left btn-sm" variant="danger">
                                 Удалить задачу
                             </b-button>
                         </td>
