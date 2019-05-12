@@ -152,30 +152,16 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/{id}/attachment", name="task.download", methods={"GET"})
-     */
-    public function downloadAttachment(Task $task, DownloadHandler $downloadHandler)
-    {
-        $this->accessControl($task);
-
-        return $downloadHandler->downloadObject(
-            $task,
-            $fileField = 'attachmentFile',
-            null,
-            true,
-            false
-        );
-    }
-
-    /**
      * @Route("/{id}/image", name="task.image", methods={"GET"})
      */
-    public function downloadImage(Task $task, DownloadHandler $downloadHandler)
+    public function downloadAttachment(Request $request, Task $task, DownloadHandler $downloadHandler)
     {
         $this->accessControl($task);
+        $routeName = $request->get('_route');
 
         return $downloadHandler->downloadObject(
             $task,
-            $fileField = 'imageFile',
+            $fileField = $routeName == 'task.download' ? 'attachmentFile' : 'imageFile',
             null,
             true,
             false
