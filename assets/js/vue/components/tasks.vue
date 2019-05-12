@@ -65,12 +65,12 @@
                 </template>
                 <template v-else-if="tasks.length === 0 && loaded">
                     <tr>
-                        <td :colspan="admin ? 5 : 4">Задачи не найдены</td>
+                        <td :colspan="admin ? 6 : 5">Задачи не найдены</td>
                     </tr>
                 </template>
                 <template v-else>
                     <tr>
-                        <td :colspan="admin ? 5 : 4">Пожалуйста, подождите...</td>
+                        <td :colspan="admin ? 6 : 5">Пожалуйста, подождите...</td>
                     </tr>
                 </template>
             </tbody>
