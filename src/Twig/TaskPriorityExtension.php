@@ -17,9 +17,9 @@ class TaskPriorityExtension extends AbstractExtension
 
     public function getFilters()
     {
-        return array(
-            new TwigFilter('taskPriority', array($this, 'formatTaskPriority')),
-        );
+        return [
+            new TwigFilter('taskPriority', [$this, 'formatTaskPriority']),
+        ];
     }
 
     public function formatTaskPriority($priority)

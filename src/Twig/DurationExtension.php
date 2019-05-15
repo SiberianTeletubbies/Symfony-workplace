@@ -17,9 +17,9 @@ class DurationExtension extends AbstractExtension
 
     public function getFilters()
     {
-        return array(
-            new TwigFilter('duration', array($this, 'formatDuration')),
-        );
+        return [
+            new TwigFilter('duration', [$this, 'formatDuration']),
+        ];
     }
 
     public function formatDuration($iso8601, $format = '%d д., %h ч.')

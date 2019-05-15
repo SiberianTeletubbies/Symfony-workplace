@@ -23,10 +23,10 @@ class FOSUserBundleListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FOSUserEvents::REGISTRATION_SUCCESS => 'onRegistrationSuccess',
             FOSUserEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
-        );
+        ];
     }
 
     public function onRegistrationSuccess(FormEvent $event)
@@ -37,7 +37,7 @@ class FOSUserBundleListener implements EventSubscriberInterface
 
     public function onRegistrationInitialize(GetResponseUserEvent $event)
     {
-        if ( $this->securityChecker->isGranted( 'ROLE_USER' ) ) {
+        if ($this->securityChecker->isGranted('ROLE_USER')) {
             $url = $this->router->generate('task.index');
             $event->setResponse(new RedirectResponse($url));
         }

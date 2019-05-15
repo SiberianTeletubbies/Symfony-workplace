@@ -18,9 +18,9 @@ class RouteExistsExtension extends AbstractExtension
 
     public function getFunctions()
     {
-        return array(
-            new TwigFunction('route_exists', array($this, 'routeExists')),
-        );
+        return [
+            new TwigFunction('route_exists', [$this, 'routeExists']),
+        ];
     }
 
     public function routeExists($name, $parameters = null)
@@ -30,6 +30,7 @@ class RouteExistsExtension extends AbstractExtension
         } catch (RouteNotFoundException $e) {
             return false;
         }
+
         return $url;
     }
 }

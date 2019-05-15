@@ -23,8 +23,7 @@ class TaskType extends AbstractType
     public function __construct(
         Security $security,
         UrlGeneratorInterface $router
-    )
-    {
+    ) {
         $this->security = $security;
         $this->router = $router;
     }
@@ -35,21 +34,21 @@ class TaskType extends AbstractType
             ->add('description',
                 TextareaType::class,
                 [
-                    'label'    => 'Описание',
+                    'label' => 'Описание',
                     'required' => true,
-                    'attr'     => array('rows' => '5')
+                    'attr' => ['rows' => '5'],
                 ])
             ->add('duration',
                 DateIntervalType::class,
                 [
-                    'label'       => 'Длительность задачи',
-                    'input'       => 'string',
-                    'required'    => true,
-                    'widget'      => 'integer',
-                    'with_years'  => false,
+                    'label' => 'Длительность задачи',
+                    'input' => 'string',
+                    'required' => true,
+                    'widget' => 'integer',
+                    'with_years' => false,
                     'with_months' => false,
-                    'with_days'   => true,
-                    'with_hours'  => true,
+                    'with_days' => true,
+                    'with_hours' => true,
                 ])
             ->add('additionalData',
                 TaskAdditionalDataType::class,
@@ -62,20 +61,20 @@ class TaskType extends AbstractType
                 ->add('user',
                     EntityType::class,
                     [
-                        'class'        => User::class,
+                        'class' => User::class,
                         'choice_label' => 'username',
-                        'label'        => 'Пользователь задачи',
-                        'required'     => false,
-                        'empty_data'   => null,
-                        'placeholder'  => 'Не выбран'
+                        'label' => 'Пользователь задачи',
+                        'required' => false,
+                        'empty_data' => null,
+                        'placeholder' => 'Не выбран',
                     ])
             ;
         }
 
         $params = [
-            'label'    => 'Файл задачи',
+            'label' => 'Файл задачи',
             'required' => false,
-            'attr'     => ['placeholder' => 'Выберите файл'],
+            'attr' => ['placeholder' => 'Выберите файл'],
         ];
         /* @var Task $task */
         $task = $builder->getData();
@@ -92,11 +91,11 @@ class TaskType extends AbstractType
             );
 
         $params = [
-            'label'           => 'Изображение задачи',
-            'required'        => false,
-            'attr'            => ['placeholder' => 'Выберите изображение'],
+            'label' => 'Изображение задачи',
+            'required' => false,
+            'attr' => ['placeholder' => 'Выберите изображение'],
             'imagine_pattern' => 'task_image_100x100',
-            'download_uri'    => false
+            'download_uri' => false,
         ];
         if (null != $task->getImage()) {
             $params['attr']['placeholder'] = $task->getImageFileName();

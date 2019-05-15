@@ -19,12 +19,15 @@ class SetAdminCommand extends Command
         $this->entityManager = $entityManager;
     }
 
-    protected function configure() {
-        $this->setName('app:set-admin')
+    protected function configure()
+    {
+        $this
+            ->setName('app:set-admin')
             ->addArgument('username', InputArgument::REQUIRED, 'Имя пользователя');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $userName = $input->getArgument('username');
         /* @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $userName]);
@@ -35,10 +38,10 @@ class SetAdminCommand extends Command
                 $this->entityManager->flush();
                 $output->writeln("Пользователю $userName назначена роль \"ROLE_ADMIN\"");
             } else {
-                $output->writeln("Пользователю уже назначена роль \"ROLE_ADMIN\"");
+                $output->writeln('Пользователю уже назначена роль "ROLE_ADMIN"');
             }
         } else {
-            $output->writeln("Пользователь не найден");
+            $output->writeln('Пользователь не найден');
         }
     }
 }

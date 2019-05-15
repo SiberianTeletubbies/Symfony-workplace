@@ -40,8 +40,7 @@ class TaskApiController extends AbstractController
         UserService $userService,
         UploaderHelper $uploaderHelper,
         CacheManager $cache
-    )
-    {
+    ) {
         $this->router = $router;
         $this->userService = $userService;
         $this->uploaderHelper = $uploaderHelper;
@@ -55,6 +54,11 @@ class TaskApiController extends AbstractController
 
     /**
      * @Route("/list/{page<\d+>?}", name="api.task.tasks", methods={"GET"})
+     *
+     * @param int            $page
+     * @param TaskRepository $taskRepository
+     *
+     * @return Response
      */
     public function tasks($page = 0, TaskRepository $taskRepository): Response
     {
@@ -70,10 +74,10 @@ class TaskApiController extends AbstractController
         $pager->setMaxPerPage(self::TASKS_PER_PAGE);
         $page = $page > $pager->getNbPages() ? $pager->getNbPages() : $page;
 
-        $result = array();
+        $result = [];
         $result['nbpages'] = $pager->getNbPages();
 
-        $result['tasks'] = array();
+        $result['tasks'] = [];
         $tasks = $page > 0 ?
             $query
                 ->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
@@ -89,6 +93,10 @@ class TaskApiController extends AbstractController
 
     /**
      * @Route("/{id<\d+>}", name="api.task", methods={"GET"})
+     *
+     * @param Task $task
+     *
+     * @return Response
      */
     public function task(Task $task): Response
     {
@@ -103,26 +111,31 @@ class TaskApiController extends AbstractController
 
     /**
      * @Route("/save/{id<\d+>?}", name="api.task.save", methods={"POST"})
+     *
+     * @param Request   $request
+     * @param Task|null $task
+     *
+     * @return Response
      */
     public function save(Request $request, Task $task = null): Response
     {
-        if ($task == null) {
+        if (null == $task) {
             $task = new Task();
-        } else if ($response = $this->accessControl($task)) {
+        } elseif ($response = $this->accessControl($task)) {
             return $response;
         }
 
-        $formData = array(
+        $formData = [
             'description' => $request->request->get('description'),
-            'duration' => array(
+            'duration' => [
                 'days' => $request->request->get('duration_days'),
                 'hours' => $request->request->get('duration_hours'),
-            ),
-            'additionalData' => array(
+            ],
+            'additionalData' => [
                 'info' => $request->request->get('info'),
                 'priority' => $request->request->get('priority'),
-            ),
-        );
+            ],
+        ];
 
         $user = $request->request->get('userid');
         if ($this->isGranted('ROLE_ADMIN') && $user) {
@@ -131,27 +144,27 @@ class TaskApiController extends AbstractController
 
         $deleteFile = $request->request->get('deleteFile');
         if ($deleteFile) {
-            $formData['attachmentFile'] = array('delete' => 1);
+            $formData['attachmentFile'] = ['delete' => 1];
         }
 
         /** @var UploadedFile $file */
         $file = $request->files->get('attachmentFile');
         if ($file) {
-            $formData['attachmentFile'] = array('file' => $file);
+            $formData['attachmentFile'] = ['file' => $file];
         }
 
         $deleteImage = $request->request->get('deleteImage');
         if ($deleteImage) {
-            $formData['imageFile'] = array('delete' => 1);
+            $formData['imageFile'] = ['delete' => 1];
         }
 
         /** @var UploadedFile $file */
         $image = $request->files->get('imageFile');
         if ($image) {
-            $formData['imageFile'] = array('file' => $image);
+            $formData['imageFile'] = ['file' => $image];
         }
 
-        $form = $this->createForm(TaskType::class, $task, array('csrf_protection' => false));
+        $form = $this->createForm(TaskType::class, $task, ['csrf_protection' => false]);
         $form->submit($formData);
 
         if ($form->isValid()) {
@@ -169,11 +182,16 @@ class TaskApiController extends AbstractController
         }
 
         $result = $this->generateTaskObject($task);
+
         return $this->jsonObjectResponse($result);
     }
 
     /**
      * @Route("/{id<\d+>}", name="api.task.delete", methods={"DELETE"})
+     *
+     * @param Task $task
+     *
+     * @return Response
      */
     public function delete(Task $task): Response
     {
@@ -192,7 +210,7 @@ class TaskApiController extends AbstractController
 
     private function generateTaskObject(Task $task)
     {
-        $result = array();
+        $result = [];
         $result['id'] = $task->getId();
         $result['description'] = $task->getDescription();
         $interval = new \DateInterval($task->getDuration());
@@ -200,7 +218,7 @@ class TaskApiController extends AbstractController
         $result['duration_hours'] = $interval->h;
 
         $additionalData = $task->getAdditionalData();
-        $result['additional_data'] = $additionalData != null ? $additionalData->getData() : [];
+        $result['additional_data'] = null != $additionalData ? $additionalData->getData() : [];
 
         if (null != $task->getAttachment()) {
             $result['attachment'] = $this->router->generate(
@@ -234,10 +252,11 @@ class TaskApiController extends AbstractController
         return $result;
     }
 
-    private function jsonObjectResponse($object) : JsonResponse
+    private function jsonObjectResponse($object): JsonResponse
     {
         $jsonContent = json_encode($object);
-        return new JsonResponse($jsonContent, 200, array(), true);
+
+        return new JsonResponse($jsonContent, 200, [], true);
     }
 
     private function accessControl(Task $task)
@@ -245,6 +264,7 @@ class TaskApiController extends AbstractController
         if (!$this->userService->accessControlToTask($task)) {
             return $this->createResponse(404);
         }
+
         return null;
     }
 
@@ -252,12 +272,13 @@ class TaskApiController extends AbstractController
     {
         $response = new Response($content ? json_encode($content) : null, $code);
         $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 
     private function getFormErrors(FormInterface $form): array
     {
-        $errors = array();
+        $errors = [];
 
         // Global
         foreach ($form->getErrors() as $error) {
@@ -272,7 +293,7 @@ class TaskApiController extends AbstractController
 
     private function getFormChildErrors(FormInterface $form, &$errors)
     {
-        foreach ($form as $child /** @var Form $child */) {
+        foreach ($form as $child /* @var Form $child */) {
             $this->getFormChildErrors($child, $errors);
             if (!$child->isValid()) {
                 foreach ($child->getErrors() as $error) {

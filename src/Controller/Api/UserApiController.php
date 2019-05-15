@@ -31,12 +31,12 @@ class UserApiController extends AbstractController
     {
         $user = $this->userService->getCurrentUser();
 
-        $result = array(
-            'id'       => $user->getId(),
+        $result = [
+            'id' => $user->getId(),
             'username' => $user->getUsername(),
-            'email'    => $user->getEmail(),
-            'admin'    => $this->isGranted('ROLE_ADMIN')
-        );
+            'email' => $user->getEmail(),
+            'admin' => $this->isGranted('ROLE_ADMIN'),
+        ];
 
         return $this->jsonObjectResponse($result);
     }
@@ -50,12 +50,12 @@ class UserApiController extends AbstractController
             return $this->createEmptyResponse(401);
         }
 
-        $result = array();
+        $result = [];
         $repository = $this->getDoctrine()->getRepository(User::class);
         $users = $repository->findAll();
         /** @var User $user */
         foreach ($users as $user) {
-            $item = array();
+            $item = [];
             $item['id'] = $user->getId();
             $item['username'] = $user->getUsername();
             $item['email'] = $user->getEmail();
@@ -67,13 +67,18 @@ class UserApiController extends AbstractController
 
     /**
      * @Route("/{username}/token", name="api.user.token", methods={"GET"})
+     *
+     * @param $username
+     * @param UserRepository           $userRepository
+     * @param JWTTokenManagerInterface $jwtManager
+     *
+     * @return Response
      */
     public function getToken(
         $username,
         UserRepository $userRepository,
         JWTTokenManagerInterface $jwtManager
-    ): Response
-    {
+    ): Response {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return $this->createEmptyResponse(401);
         }
@@ -88,16 +93,18 @@ class UserApiController extends AbstractController
         return $this->jsonObjectResponse(['token' => $token]);
     }
 
-    private function jsonObjectResponse($object) : JsonResponse
+    private function jsonObjectResponse($object): JsonResponse
     {
         $jsonContent = json_encode($object);
-        return new JsonResponse($jsonContent, 200, array(), true);
+
+        return new JsonResponse($jsonContent, 200, [], true);
     }
 
     private function createEmptyResponse($code = 200)
     {
         $response = new Response(null, $code);
         $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 }

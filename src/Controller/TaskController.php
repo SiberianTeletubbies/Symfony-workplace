@@ -34,6 +34,11 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/", name="task.index", methods={"GET"})
+     *
+     * @param Request        $request
+     * @param TaskRepository $taskRepository
+     *
+     * @return Response
      */
     public function index(Request $request, TaskRepository $taskRepository): Response
     {
@@ -64,6 +69,10 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/new", name="task.new", methods={"GET","POST"})
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function new(Request $request): Response
     {
@@ -88,12 +97,16 @@ class TaskController extends AbstractController
         return $this->render('task/new.html.twig', [
             'task' => $task,
             'form' => $form->createView(),
-            'return_url' => $return_url
+            'return_url' => $return_url,
         ]);
     }
 
     /**
      * @Route("/{id}", name="task.show", methods={"GET"})
+     *
+     * @param Task $task
+     *
+     * @return Response
      */
     public function show(Task $task): Response
     {
@@ -103,12 +116,17 @@ class TaskController extends AbstractController
 
         return $this->render('task/show.html.twig', [
             'task' => $task,
-            'return_url' => $return_url
+            'return_url' => $return_url,
         ]);
     }
 
     /**
      * @Route("/{id}/edit", name="task.edit", methods={"GET","POST"})
+     *
+     * @param Request $request
+     * @param Task    $task
+     *
+     * @return Response
      */
     public function edit(Request $request, Task $task): Response
     {
@@ -128,12 +146,17 @@ class TaskController extends AbstractController
         return $this->render('task/edit.html.twig', [
             'task' => $task,
             'form' => $form->createView(),
-            'return_url' => $return_url
+            'return_url' => $return_url,
         ]);
     }
 
     /**
      * @Route("/{id}", name="task.delete", methods={"DELETE"})
+     *
+     * @param Request $request
+     * @param Task    $task
+     *
+     * @return Response
      */
     public function delete(Request $request, Task $task): Response
     {
@@ -153,6 +176,12 @@ class TaskController extends AbstractController
     /**
      * @Route("/{id}/attachment", name="task.download", methods={"GET"})
      * @Route("/{id}/image", name="task.image", methods={"GET"})
+     *
+     * @param Request         $request
+     * @param Task            $task
+     * @param DownloadHandler $downloadHandler
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function download(Request $request, Task $task, DownloadHandler $downloadHandler)
     {
@@ -161,7 +190,7 @@ class TaskController extends AbstractController
 
         return $downloadHandler->downloadObject(
             $task,
-            $fileField = $routeName == 'task.download' ? 'attachmentFile' : 'imageFile',
+            $fileField = 'task.download' == $routeName ? 'attachmentFile' : 'imageFile',
             null,
             true,
             false
@@ -180,6 +209,7 @@ class TaskController extends AbstractController
         $user = $this->getUser();
         $page = $this->redis->exists("controller[{$user->getId()}].task.page") ?
             $this->redis->get("controller[{$user->getId()}].task.page") : 1;
-        return $this->generateUrl('task.index', [ 'page' => $page ]);
+
+        return $this->generateUrl('task.index', ['page' => $page]);
     }
 }

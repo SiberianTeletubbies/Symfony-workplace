@@ -34,7 +34,7 @@ class TaskAdditionalDataType extends AbstractType
                     'constraints' => [
                         new NotBlank(),
                     ],
-                    'attr' => array('rows' => '3'),
+                    'attr' => ['rows' => '3'],
                     'mapped' => false,
                 ])
             ->add('priority',
@@ -44,15 +44,12 @@ class TaskAdditionalDataType extends AbstractType
                     'required' => true,
                     'constraints' => [
                         new NotBlank(),
-                        new Range(['min' => 0, 'max' => 2])
+                        new Range(['min' => 0, 'max' => 2]),
                     ],
-                    'choices'  => [
-                        $this->formatter->formatPriorityTask(StringFormatterService::PRIORITY_LOW)
-                            => StringFormatterService::PRIORITY_LOW,
-                        $this->formatter->formatPriorityTask(StringFormatterService::PRIORITY_MEDIUM)
-                            => StringFormatterService::PRIORITY_MEDIUM,
-                        $this->formatter->formatPriorityTask(StringFormatterService::PRIORITY_HIGH)
-                            => StringFormatterService::PRIORITY_HIGH,
+                    'choices' => [
+                        $this->formatter->formatPriorityTask(StringFormatterService::PRIORITY_LOW) => StringFormatterService::PRIORITY_LOW,
+                        $this->formatter->formatPriorityTask(StringFormatterService::PRIORITY_MEDIUM) => StringFormatterService::PRIORITY_MEDIUM,
+                        $this->formatter->formatPriorityTask(StringFormatterService::PRIORITY_HIGH) => StringFormatterService::PRIORITY_HIGH,
                     ],
                     'mapped' => false,
                 ]);

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 class StringFormatterService
 {
     public const PRIORITY_LOW = 0;
@@ -12,6 +11,7 @@ class StringFormatterService
     public function formatDuration($iso8601, $format = '%d д., %h ч.')
     {
         $interval = new \DateInterval($iso8601);
+
         return $interval->format($format);
     }
 
@@ -22,6 +22,7 @@ class StringFormatterService
             self::PRIORITY_MEDIUM => 'Средний',
             self::PRIORITY_HIGH => 'Высокий',
         ];
+
         return isset($labels[$priority]) ? $labels[$priority] : null;
     }
 }

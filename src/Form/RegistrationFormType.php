@@ -8,7 +8,6 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 
 class RegistrationFormType extends AbstractType
@@ -22,7 +21,7 @@ class RegistrationFormType extends AbstractType
                 [
                     'label' => 'Адрес электронной почты',
                     'required' => true,
-                    'attr' => ['placeholder' => 'Введите свой адрес электронной почты',],
+                    'attr' => ['placeholder' => 'Введите свой адрес электронной почты'],
                 ])
             ->add(
                 'username',
@@ -30,7 +29,7 @@ class RegistrationFormType extends AbstractType
                 [
                     'label' => 'Имя пользователя',
                     'required' => true,
-                    'attr' => ['placeholder' => 'Введите своё имя пользователя',],
+                    'attr' => ['placeholder' => 'Введите своё имя пользователя'],
                 ])
             ->add(
                 'plainPassword',
@@ -38,7 +37,7 @@ class RegistrationFormType extends AbstractType
                 [
                     'label' => 'Пароль',
                     'required' => true,
-                    'attr' => ['placeholder' => 'Введите свой пароль',],
+                    'attr' => ['placeholder' => 'Введите свой пароль'],
                 ])
             ->add('termsAccepted',
                 CheckboxType::class,
