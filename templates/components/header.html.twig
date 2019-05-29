@@ -36,15 +36,18 @@
                             {{ app.user.username }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                            <a class="dropdown-item" href="{{ path('fos_user_change_password') }}">
+                                Изменить пароль
+                            </a>
+                            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                             <a class="dropdown-item" href="{{ path('start_page', {'_switch_user': '_exit'}) }}">
-                                Выйти из под {{ app.user.username }}
+                                <span class="font-weight-bold">Выйти из под {{ app.user.username }}</span>
                             </a>
-                        {% else %}
+                            {% else %}
                             <a class="dropdown-item" href="{{ path('fos_user_security_logout') }}">
-                                Выйти
+                                <span class="font-weight-bold">Выйти</span>
                             </a>
-                        {% endif %}
+                            {% endif %}
                         </div>
                     </li>
                 </ul>

@@ -60,7 +60,7 @@ class TaskApiController extends AbstractController
      *
      * @return Response
      */
-    public function tasks($page = 0, TaskRepository $taskRepository): Response
+    public function tasks(TaskRepository $taskRepository, $page = 0): Response
     {
         $admin = $this->isGranted('ROLE_ADMIN');
 

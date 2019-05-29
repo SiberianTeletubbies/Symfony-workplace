@@ -26,6 +26,7 @@ class FOSUserBundleListener implements EventSubscriberInterface
         return [
             FOSUserEvents::REGISTRATION_SUCCESS => 'onRegistrationSuccess',
             FOSUserEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
+            FOSUserEvents::CHANGE_PASSWORD_SUCCESS => 'onChangePasswordSuccess',
         ];
     }
 
@@ -41,5 +42,11 @@ class FOSUserBundleListener implements EventSubscriberInterface
             $url = $this->router->generate('task.index');
             $event->setResponse(new RedirectResponse($url));
         }
+    }
+
+    public function onChangePasswordSuccess(FormEvent $event)
+    {
+        $url = $this->router->generate('task.index');
+        $event->setResponse(new RedirectResponse($url));
     }
 }
