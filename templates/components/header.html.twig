@@ -36,6 +36,11 @@
                             {{ app.user.username }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a class="dropdown-item" href="{{ path('easyadmin') }}">
+                                Администрирование
+                            </a>
+                            {% endif %}
                             <a class="dropdown-item" href="{{ path('fos_user_change_password') }}">
                                 Изменить пароль
                             </a>
