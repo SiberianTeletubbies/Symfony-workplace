@@ -22,7 +22,6 @@ use Vich\UploaderBundle\Handler\DownloadHandler;
  */
 class TaskController extends AbstractController
 {
-    const TASKS_PER_PAGE = 8;
     private $redis;
     private $userService;
 
@@ -42,27 +41,16 @@ class TaskController extends AbstractController
      */
     public function index(Request $request, TaskRepository $taskRepository): Response
     {
-        $user = $this->getUser();
+        $user = null;
         $page = $request->get('page', 1);
 
-        $queryBuilder = $taskRepository->createQueryBuilder('t');
-        $query = $this->isGranted('ROLE_ADMIN') ?
-            $queryBuilder->getQuery() :
-            $queryBuilder->andWhere('t.user = :user')->setParameter('user', $this->getUser())->getQuery();
-
-        $adapter = new DoctrineORMAdapter($query);
-        $pager = new Pagerfanta($adapter);
-        $pager->setMaxPerPage(self::TASKS_PER_PAGE);
-
-        $page = $page > $pager->getNbPages() ? $pager->getNbPages() : $page;
-
-        $pager->setCurrentPage($page);
-        $query->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
-            ->setMaxResults(self::TASKS_PER_PAGE);
-        $this->redis->setex("controller[{$user->getId()}].task.page", 3600, $page);
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+        }
+        $pager = $taskRepository->getByPage($page, $user);
 
         return $this->render('task/index.html.twig', [
-            'tasks' => $query->getResult(),
+            'tasks' => $pager->getCurrentPageResults(),
             'pager' => $pager,
         ]);
     }

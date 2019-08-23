@@ -62,29 +62,16 @@ class TaskApiController extends AbstractController
      */
     public function tasks(TaskRepository $taskRepository, $page = 0): Response
     {
-        $admin = $this->isGranted('ROLE_ADMIN');
+        $user = null;
 
-        $queryBuilder = $taskRepository->createQueryBuilder('t');
-        $query = $admin ?
-            $queryBuilder->getQuery() :
-            $queryBuilder->andWhere('t.user = :user')->setParameter('user', $this->getUser())->getQuery();
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+        }
+        $pager = $taskRepository->getByPage($page, $user);
 
-        $adapter = new DoctrineORMAdapter($query);
-        $pager = new Pagerfanta($adapter);
-        $pager->setMaxPerPage(self::TASKS_PER_PAGE);
-        $page = $page > $pager->getNbPages() ? $pager->getNbPages() : $page;
-
-        $result = [];
         $result['nbpages'] = $pager->getNbPages();
-
         $result['tasks'] = [];
-        $tasks = $page > 0 ?
-            $query
-                ->setFirstResult(($page - 1) * self::TASKS_PER_PAGE)
-                ->setMaxResults(self::TASKS_PER_PAGE)->getResult() :
-            $query->getResult();
-        /* @var Task $task */
-        foreach ($tasks as $task) {
+        foreach ($pager->getCurrentPageResults() as $task) {
             $result['tasks'][] = $this->generateTaskObject($task);
         }
 
