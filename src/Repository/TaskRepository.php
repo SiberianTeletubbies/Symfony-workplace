@@ -17,7 +17,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class TaskRepository extends ServiceEntityRepository
 {
-    const TASKS_PER_PAGE = 2;
+    const TASKS_PER_PAGE = 8;
 
     public function __construct(RegistryInterface $registry)
     {

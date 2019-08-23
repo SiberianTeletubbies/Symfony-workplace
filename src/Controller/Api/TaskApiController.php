@@ -24,7 +24,6 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
  */
 class TaskApiController extends AbstractController
 {
-    const TASKS_PER_PAGE = 8;
     private $router;
     /** @var UserService */
     private $userService;
